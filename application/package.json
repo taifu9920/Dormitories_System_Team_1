@@ -1,7 +1,7 @@
 {
-  "name": "js-serviceterminal",
+  "name": "dormitories-system",
   "version": "1.0.0",
-  "description": "Service Terminal made from JavaScript, the goal is to make a personal cloud computing server, can be deploy to multiple computers and managing on one host",
+  "description": "Final Project for CSC031 by 1st Team.",
   "main": "run.js",
   "scripts": {
     "dev": "npx sass ./sass/style.scss ./static/css/style.css"
