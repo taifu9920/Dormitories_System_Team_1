@@ -1,0 +1,32 @@
+{
+  "name": "js-serviceterminal",
+  "version": "1.0.0",
+  "description": "Service Terminal made from JavaScript, the goal is to make a personal cloud computing server, can be deploy to multiple computers and managing on one host",
+  "main": "run.js",
+  "scripts": {
+    "dev": "npx sass ./sass/style.scss ./static/css/style.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taifu9920/JS-ServiceTerminal.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taifu9920/JS-ServiceTerminal/issues"
+  },
+  "homepage": "https://github.com/taifu9920/JS-ServiceTerminal#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.6",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "express-winston": "^4.2.0",
+    "jquery": "^3.6.0",
+    "winston": "^3.8.1",
+    "winston-daily-rotate-file": "^4.7.1"
+  }
+}

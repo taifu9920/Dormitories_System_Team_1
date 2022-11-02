@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Dormitories Management System</title>
+    <meta charset="utf-8" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script src="js/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <!-- jQuery Modal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+</head>
+
+<body>
+    <div id="alert" class="alert" style="display:none">
+        <div>
+            <h2>Alert</h2>
+            <span><%= msg %></span>
+            <div><button onclick='$("#alert").fadeOut("slow")''>Confirm</button></div>
+        </div>
+    </div>
+
+    <div class="loading">
+        <div>
+            <h2>Loading</h2>
+            <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+            </svg>
+        </div>
+    </div>
+
+    <div class="index">
+        <div class="login">
+            <div class="header">System Login</div>
+            <div class="infos">
+                <form method="post" action="/login">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="field">
+                        <label for="account"><span class="material-icons">person</span></label>
+                        <input class="textfield" autocomplete="true" placeholder="Username" id="account" name="account" type="text" />
+                    </div>
+                    <div class="field">
+                        <label for="password"><span class="material-icons">password</span></label>
+                        <input class="textfield" autocomplete="true" placeholder="Password" id="password" name="password" type="password" />
+                    </div>
+                    <div class="btn">
+                        <label for="submit"><span class="material-icons">login</span></label>
+                        <input id="submit" type="submit" value="Login" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(window).on('load', function() {
+            $('.loading').hide();
+        });
+
+        if ("<%= msg %>" != ""){
+            $("#alert").fadeIn("slow");
+        }
+    </script>
+</body>
+
+</html>

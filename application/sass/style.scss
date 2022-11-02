@@ -1,0 +1,266 @@
+$background-color: #666;
+$LoginTitleColor: rgba(#000, 50%);
+$LoginBackgroundColor: rgba(#333, 50%);
+
+$offset: 187;
+$duration: 1.4s;
+
+@keyframes rotator {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(270deg);
+    }
+}
+
+@keyframes colors {
+    0% {
+        stroke: #4285F4;
+    }
+
+    25% {
+        stroke: #DE3E35;
+    }
+
+    50% {
+        stroke: #F7C223;
+    }
+
+    75% {
+        stroke: #1B9A59;
+    }
+
+    100% {
+        stroke: #4285F4;
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dashoffset: $offset;
+    }
+
+    50% {
+        stroke-dashoffset: calc($offset/4);
+        transform: rotate(135deg);
+    }
+
+    100% {
+        stroke-dashoffset: $offset;
+        transform: rotate(450deg);
+    }
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: $background-color;
+}
+
+.alert {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(#000, 50%);
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    > div {
+        background-color: rgba(gray, 80%);
+        min-width: 300px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        > h2, > span {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        }
+
+        > h2 {
+            margin: 0;
+            font-size: 24px;
+            color: white;
+            background-color: rgba(#000, 50%);
+        }
+
+        > span {
+            color: white;
+            font-size: 18px;
+        }
+
+        > div {
+            background-color: rgba(#000, 20%);
+            border-radius: 10px;
+            margin: 0 10px 10px 10px;
+            > button {
+                border: solid #000 1px;
+                border-radius: 10px;
+                font-size: 20px;
+                padding: 10px;
+                background-color: transparent;
+                color: white;
+                line-height: 24px;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: lighten(rgba($LoginBackgroundColor, 20%), 60%);
+                }
+            }
+        }
+    }
+}
+
+.loading {
+    background-color: gray;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+
+    > div {
+        display: grid;
+        justify-items: center;
+        align-content: center;
+
+        > h2 {
+            color: white;
+        }
+
+        > .spinner {
+            animation: rotator $duration linear infinite;
+
+            > .path {
+                stroke-dasharray: $offset;
+                stroke-dashoffset: 0;
+                transform-origin: center;
+                animation:
+                    dash $duration ease-in-out infinite,
+                    colors ($duration*4) ease-in-out infinite;
+            }
+        }
+    }
+}
+
+.index {
+    text-align: center;
+    display: flex;
+    height: 100%;
+    background: url("/img/index_background.png") no-repeat center center fixed;
+    background-size: cover;
+
+    > .login {
+        margin: auto;
+        background-color: $LoginBackgroundColor;
+        width: 400px;
+
+
+        > .header {
+            background-color: $LoginTitleColor;
+            font-size: 24px;
+            padding: 10px 0;
+            color: white;
+        }
+
+        > .infos {
+            color: white;
+            margin-top: 20px;
+
+            > form {
+                > .field {
+                    margin: 10px 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: solid #000 1px;
+                    border-radius: 10px;
+                    background-color: rgba($LoginBackgroundColor, 20%);
+
+                    > label {
+                        border-top-left-radius: 10px;
+                        border-bottom-left-radius: 10px;
+
+                        > span {
+                            width: 50px;
+                            height: 50px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            background-color: rgba($LoginBackgroundColor, 40%);
+                            border-top-left-radius: 10px;
+                            border-bottom-left-radius: 10px;
+                        }
+                    }
+
+                    > .textfield {
+                        margin: 0;
+                        height: 50px;
+                        border: 0;
+                        border-top-right-radius: 10px;
+                        border-bottom-right-radius: 10px;
+                        padding: 0;
+                        width: 100%;
+                        text-align: center;
+                        background-color: rgba($LoginBackgroundColor, 20%);
+                        color: white;
+                        font-size: 16px;
+
+                        &::placeholder {
+                            color: white;
+                        }
+
+                        &[type="password"] {
+                            font-size: 24px;
+
+                            &::placeholder {
+                                font-size: 16px;
+                            }
+                        }
+                    }
+                }
+
+                > .btn {
+                    display: inline-flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: solid #000 1px;
+                    border-radius: 10px;
+                    background-color: rgba($LoginBackgroundColor, 40%);
+                    margin-bottom: 20px;
+
+                    > *:hover {
+                        cursor: pointer;
+                    }
+
+                    &:hover {
+                        cursor: pointer;
+                        background-color: lighten(rgba($LoginBackgroundColor, 20%), 60%);
+                    }
+
+                    > label {
+                        > span {
+                            padding: 10px 0 10px 10px;
+                        }
+                    }
+
+                    > input[type="submit"] {
+                        font-size: 20px;
+                        padding: 10px;
+                        background-color: #ffffff00;
+                        border: 0;
+                        color: white;
+                        line-height: 24px;
+                    }
+                }
+            }
+        }
+    }
+}
