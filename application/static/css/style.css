@@ -94,6 +94,24 @@ html, body {
   background-color: rgba(204, 204, 204, 0.2);
 }
 
+a.button {
+  width: 50px;
+  height: 75px;
+  padding: 10px;
+  margin: 5px;
+  text-decoration: none;
+  color: white;
+}
+a.button.logout {
+  background-color: red;
+}
+a.button.lodge {
+  background-color: green;
+}
+a.button.manage {
+  background-color: orange;
+}
+
 .loading {
   background-color: gray;
   position: absolute;

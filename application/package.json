@@ -4,7 +4,8 @@
   "description": "Final Project for CSC031 by 1st Team.",
   "main": "run.js",
   "scripts": {
-    "dev": "npx sass ./sass/style.scss ./static/css/style.css"
+    "dev": "npx sass ./sass/style.scss ./static/css/style.css",
+    "start": "node run run.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "express-session": "^1.17.3",
     "express-winston": "^4.2.0",
     "jquery": "^3.6.0",
+    "mysql": "^2.18.1",
     "winston": "^3.8.1",
     "winston-daily-rotate-file": "^4.7.1"
   }

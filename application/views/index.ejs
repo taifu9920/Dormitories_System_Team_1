@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Dormitories Management System</title>
+    <title><%= process.env.Web_Title %></title>
     <meta charset="utf-8" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <script src="js/jquery.min.js"></script>
@@ -15,15 +15,15 @@
 <body>
     <div id="alert" class="alert" style="display:none">
         <div>
-            <h2>Alert</h2>
+            <h2>提示</h2>
             <span><%= msg %></span>
-            <div><button onclick='$("#alert").fadeOut("slow")''>Confirm</button></div>
+            <div><button onclick='$("#alert").fadeOut("slow")''>確認</button></div>
         </div>
     </div>
 
     <div class="loading">
         <div>
-            <h2>Loading</h2>
+            <h2>載入中...</h2>
             <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
                 <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
             </svg>
@@ -32,21 +32,21 @@
 
     <div class="index">
         <div class="login">
-            <div class="header">System Login</div>
+            <div class="header"><%= process.env.Web_Title %> 登入</div>
             <div class="infos">
                 <form method="post" action="/login">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <div class="field">
                         <label for="account"><span class="material-icons">person</span></label>
-                        <input class="textfield" autocomplete="true" placeholder="Username" id="account" name="account" type="text" />
+                        <input class="textfield" autocomplete="true" placeholder="使用者" id="account" name="account" type="text" />
                     </div>
                     <div class="field">
                         <label for="password"><span class="material-icons">password</span></label>
-                        <input class="textfield" autocomplete="true" placeholder="Password" id="password" name="password" type="password" />
+                        <input class="textfield" autocomplete="true" placeholder="密碼" id="password" name="password" type="password" />
                     </div>
                     <div class="btn">
                         <label for="submit"><span class="material-icons">login</span></label>
-                        <input id="submit" type="submit" value="Login" />
+                        <input id="submit" type="submit" value="登入" />
                     </div>
                 </form>
             </div>
@@ -60,6 +60,7 @@
 
         if ("<%= msg %>" != ""){
             $("#alert").fadeIn("slow");
+            $("#alert button").focus();
         }
     </script>
 </body>

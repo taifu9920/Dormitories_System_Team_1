@@ -1,5 +1,14 @@
 require('dotenv').config();
 require('winston-daily-rotate-file')
+var mysql = require("mysql");
+var DB = mysql.createConnection({
+    host: process.env["DB_IP"],
+    user: process.env["DB_User"],
+    port: process.env["DB_Port"],
+    password: process.env["DB_Pass"],
+    database: process.env["DB_Schema"]
+});
+
 const express = require("express")
     , winston = require('winston')
     , { combine, timestamp, printf, colorize, align } = winston.format
@@ -26,9 +35,15 @@ let logger = winston.createLogger({
     ]
 , });
 
+DB.connect(function(err) {
+    if (err) logger.error(process.env["DB_connect_failed"]);
+    else logger.info(process.env["DB_connect_success"]);
+});
+
 let app = express();
 app.use(compression())
 app.set('view engine', 'ejs');
+
 
 app.use(session({
     secret: process.env["session_secret"],
@@ -63,30 +78,49 @@ app.get("/signin", csurf({ cookie: true }), function(req, res) {
 });
 
 app.post("/login", express.urlencoded({ extended: false }), csurf({ cookie: true }), function(req, res) {
-    if (req.body["account"] == process.env["account"] && req.body["password"] == process.env["password"]) {
-        req.session.username = process.env["account"];
-        res.redirect("/");
-    }
-    else {
-        res.cookie("msg", "Wrong information", { httpOnly: true });
-        res.redirect("/signin");
-    }
+    var datas = DB.query("SELECT * FROM dormitories_system.configs;", function(err, rows){
+        if (err) logger.error(process.env["DB_connect_failed"]);
+        else{
+            datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
+            if (req.body["account"] == datas.get("owner_account") && req.body["password"] == datas.get("owner_password")) {
+                req.session.username = req.body["account"];
+                res.redirect("/");
+            } else {
+                res.cookie("msg", "Login failed!", { httpOnly: true });
+                res.redirect("/signin");
+            }
+        }
+    })
 });
 
 app.get("/logout", function(req, res) {
     req.session.destroy();
-    res.cookie("msg", "You have been logout.", { httpOnly: true });
+    res.cookie("msg", "您已登出，請重新登入！", { httpOnly: true });
     res.redirect('/signin');
 });
 
 // After login
 function auth(req, res, next){
-    if (req.session.username == process.env["account"]) next()
-    else return res.redirect('/signin')
+    DB.query("SELECT * FROM dormitories_system.configs;", function(err, rows){
+        if (err) logger.error(process.env["DB_connect_failed"]);
+        else {
+            datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
+            if (req.session.username == datas.get("owner_account")) next()
+            else return res.redirect('/signin')
+        }
+    })
 }
 
 app.get("/", auth, function(req, res) {
-    res.render("home", { msg: "Hello user: " + req.session.username });
+    res.render("home", { username: req.session.username});
+});
+
+app.get("/lodge", auth, function(req, res) {
+    res.render("lodge", { username: req.session.username});
+});
+
+app.get("/manage", auth, function(req, res) {
+    res.render("manage", { username: req.session.username});
 });
 
 app.use((req, res) => {

@@ -12,5 +12,5 @@
 3. run `npm install`
 4. copy `example.env` to `.env` by `cp example.env .env`
 5. Modify the file `.env` to your configure settings, secret should be length of 48 
-6. Use `node run main` to start the web
+6. Use `npm start` to start the web
 7. Connect to the application
