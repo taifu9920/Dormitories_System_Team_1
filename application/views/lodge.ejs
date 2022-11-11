@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title><%= process.env.Web_Title %></title>
+    <meta charset="utf-8" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script src="js/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="loading">
+        <div>
+            <h2>Loading</h2>
+            <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+            </svg>
+        </div>
+    </div>
+    <h2>您現在位於：住宿頁面</h2>
+    <h1>歡迎！使用者<%= username %></h1>
+    <a class="button logout" href="/logout">登出</a>
+    <a class="button lodge" href="/">回到首頁</a>
+    <script>
+        $(window).on('load', function() {
+            $('.loading').hide();
+        });
+    </script>
+</body>
+
+</html>
