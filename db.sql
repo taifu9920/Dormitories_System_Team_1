@@ -118,6 +118,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
+INSERT INTO `managers` VALUES ('M1234567','黃舍監','test@mail.nuk.edu.tw','0902345678','aaa123');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +252,7 @@ CREATE TABLE `students` (
   `Email` varchar(100) NOT NULL,
   `Phone` varchar(20) NOT NULL,
   `Sex` tinyint unsigned NOT NULL,
-  `R_ID` int unsigned NOT NULL COMMENT 'RoomID',
+  `R_ID` int unsigned DEFAULT NULL COMMENT 'RoomID',
   `Password` varchar(50) NOT NULL,
   PRIMARY KEY (`S_ID`),
   UNIQUE KEY `S_ID_UNIQUE` (`S_ID`),
@@ -266,6 +267,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
+INSERT INTO `students` VALUES ('A1095512','林敬寶',109,'資訊工程系','a1095512@mail.nuk.edu.tw','0908850282',0,NULL,'a1095512');
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -306,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-11 16:33:21
+-- Dump completed on 2022-11-13  3:33:41

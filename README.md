@@ -14,3 +14,14 @@
 5. Modify the file `.env` to your configure settings.
 6. Use `npm start` or the file `./run.bat` to start the web application.
 7. Connect to the application.
+## How to update
+1. Drop Your old database.
+2. Execute `db.sql` in your Database.
+3. run `npm install` or execute `./install.bat` file.
+## Defaults
+Admin account: admin
+Admin password: 12345
+Manager1 account: M1234567
+manager1 password: aaa123
+Student1 account: A1095512
+Student1 password: a1095512

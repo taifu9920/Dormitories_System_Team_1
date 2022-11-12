@@ -9,6 +9,8 @@ var DB = mysql.createConnection({
     database: process.env["DB_Schema"]
 });
 
+level_names = ["管理員", "舍監", "學生"]
+
 const express = require("express")
     , winston = require('winston')
     , { combine, timestamp, printf, colorize, align } = winston.format
@@ -78,19 +80,9 @@ app.get("/signin", csurf({ cookie: true }), function(req, res) {
 });
 
 app.post("/login", express.urlencoded({ extended: false }), csurf({ cookie: true }), function(req, res) {
-    var datas = DB.query("SELECT * FROM dormitories_system.configs;", function(err, rows){
-        if (err) logger.error(process.env["DB_connect_failed"]);
-        else{
-            datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
-            if (req.body["account"] == datas.get("owner_account") && req.body["password"] == datas.get("owner_password")) {
-                req.session.username = req.body["account"];
-                res.redirect("/");
-            } else {
-                res.cookie("msg", "Login failed!", { httpOnly: true });
-                res.redirect("/signin");
-            }
-        }
-    })
+    req.session.username = req.body["account"];
+    req.session.password = req.body["password"];
+    res.redirect("/");
 });
 
 app.get("/logout", function(req, res) {
@@ -100,27 +92,70 @@ app.get("/logout", function(req, res) {
 });
 
 // After login
-function auth(req, res, next){
-    DB.query("SELECT * FROM dormitories_system.configs;", function(err, rows){
-        if (err) logger.error(process.env["DB_connect_failed"]);
-        else {
-            datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
-            if (req.session.username == datas.get("owner_account")) next()
-            else return res.redirect('/signin')
+async function auth(req, res, next){
+    try{
+        //System Account Check
+        System = await new Promise((resolve, reject)=>{
+            DB.query("SELECT * FROM dormitories_system.configs where `SC_Tag` like 'owner_%';", function(err, rows){
+                if (err) reject(process.env["DB_connect_failed"])
+                else {
+                    datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
+                    resolve(datas)
+                }
+            })
+        })
+        //Manager Account Check
+        Manager = await new Promise((resolve, reject)=>{
+            DB.query("SELECT M_ID, Password FROM dormitories_system.managers;", function(err, rows){
+                if (err) reject(process.env["DB_connect_failed"])
+                else {
+                    datas = new Map(rows.map(o => [o.M_ID, o.Password]));
+                    resolve(datas)
+                }
+            })
+        })
+        //Student Account Check
+        Student = await new Promise((resolve, reject)=>{
+            DB.query("SELECT S_ID, Password FROM dormitories_system.students;", function(err, rows){
+                if (err) reject(process.env["DB_connect_failed"])
+                else {
+                    datas = new Map(rows.map(o => [o.S_ID, o.Password]));
+                    resolve(datas)
+                }
+            })
+        })
+        if ((req.session.username == System.get("owner_account")
+        && req.session.password == System.get("owner_password")) 
+        || (Manager.get(req.session.username) == req.session.password
+        && req.session.password != null) 
+        || (Student.get(req.session.username) == req.session.password
+        && req.session.password != null)) {
+            if (req.session.username == System.get("owner_account")) req.session.level=0
+            else if (Manager.get(req.session.username)) req.session.level=1
+            else if (Student.get(req.session.username)) req.session.level=2
+            next()}
+        else{
+            res.cookie("msg", "登入失敗！請重試。", { httpOnly: true });
+            res.redirect("/signin");
         }
-    })
+    }catch (e){
+        logger.error("Error when auth a user, Error message: " + e);
+        req.session.destroy();
+        res.cookie("msg", "出錯誤了!\n如無法登入聯繫伺服器管理人員！", { httpOnly: true });
+        res.redirect("/signin");
+    }
 }
 
 app.get("/", auth, function(req, res) {
-    res.render("home", { username: req.session.username});
+    res.render("home", { username: req.session.username, level: level_names[req.session.level]});
 });
 
 app.get("/lodge", auth, function(req, res) {
-    res.render("lodge", { username: req.session.username});
+    res.render("lodge", { username: req.session.username, level: level_names[req.session.level]});
 });
 
 app.get("/manage", auth, function(req, res) {
-    res.render("manage", { username: req.session.username});
+    res.render("manage", { username: req.session.username, level: level_names[req.session.level]});
 });
 
 app.use((req, res) => {

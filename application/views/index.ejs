@@ -58,7 +58,7 @@
             $('.loading').hide();
         });
 
-        if ("<%= msg %>" != ""){
+        if (<%= Boolean(msg) %>){
             $("#alert").fadeIn("slow");
             $("#alert button").focus();
         }
