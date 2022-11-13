@@ -19,9 +19,9 @@
 2. Execute `db.sql` in your Database.
 3. run `npm install` or execute `./install.bat` file.
 ## Defaults
-Admin account: admin
-Admin password: 12345
-Manager1 account: M1234567
-manager1 password: aaa123
-Student1 account: A1095512
-Student1 password: a1095512
+#### Admin account: admin
+#### Admin password: 12345
+#### Manager1 account: M1234567
+#### manager1 password: aaa123
+#### Student1 account: A1095512
+#### Student1 password: a1095512
