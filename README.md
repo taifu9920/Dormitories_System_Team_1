@@ -24,6 +24,6 @@
 #### Admin account: admin
 #### Admin password: 12345
 #### Manager1 account: M1234567
-#### manager1 password: aaa123
+#### Manager1 password: aaa123
 #### Student1 account: A1095512
 #### Student1 password: a1095512
