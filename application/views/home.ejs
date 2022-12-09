@@ -23,6 +23,25 @@
     <a class="button logout" href="/logout">登出</a>
     <a class="button lodge" href="/lodge">住宿頁面</a>
     <a class="button manage" href="/manage">管理頁面</a>
+	
+	<div id="content">
+	<% if (level == "學生") {%>
+		<h3>This is Student page!</h3>
+		<!-- 在這裡弄學生頁面 -->
+	<% } else if (level == "舍監") { %>
+		<h3>This is Manager page</h3>
+		<!-- 在這裡弄舍監頁面 -->
+		
+	<% } else if (level == "管理員") { %>
+		<h3>This is Admin page</h3>
+		<!-- 在這裡弄管理員頁面 -->
+	<% } else { %>
+		<!-- 正常來說不會跑來這 -->
+		<h3>Something went wrong!!</h3>
+		<h4>You should have level!</h4>
+	<% } %>
+	</div>
+	
     <script>
         $(window).on('load', function() {
             $('.loading').hide();
