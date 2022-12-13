@@ -112,6 +112,17 @@ a.button.manage {
   background-color: orange;
 }
 
+a.managepage {
+  width: 50px;
+  height: 75px;
+  padding: 10px;
+  margin: 5px;
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  line-height: 250%;
+  background-color: #4285F4;
+}
+
 .loading {
   background-color: gray;
   position: absolute;
@@ -232,6 +243,51 @@ a.button.manage {
   border: 0;
   color: white;
   line-height: 24px;
+}
+
+.managediv100_95 {
+  height: 100%;
+  width: 95%;
+  margin: auto;
+}
+
+.managediv100_100 {
+  height: 100%;
+  width: 100%;
+}
+
+.managedivcenter {
+  height: 75%;
+  width: 100%;
+  display: flex;
+}
+
+.managetitlediv {
+  height: 10%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.managetitleleft {
+  position: absolute;
+  width: 50%;
+  top: 0;
+  left: 0;
+}
+
+.managetitleright {
+  position: absolute;
+  width: 50%;
+  top: 0;
+  left: 50%;
+}
+
+.managetilerightupperright {
+  position: absolute;
+  right: 0;
+  top: 30px;
 }
 
 /*# sourceMappingURL=style.css.map */
