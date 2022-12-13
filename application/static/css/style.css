@@ -36,7 +36,8 @@
     transform: rotate(450deg);
   }
 }
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -59,7 +60,8 @@ html, body {
   flex-wrap: wrap;
   justify-content: center;
 }
-.alert > div > h2, .alert > div > span {
+.alert > div > h2,
+.alert > div > span {
   display: block;
   text-align: center;
   padding: 10px;
@@ -271,7 +273,6 @@ a.managepage {
 }
 
 .managetitleleft {
-  position: absolute;
   width: 50%;
   top: 0;
   left: 0;

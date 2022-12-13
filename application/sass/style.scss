@@ -53,7 +53,8 @@ $duration: 1.4s;
     }
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -69,37 +70,39 @@ html, body {
     width: 100%;
     height: 100%;
 
-    > div {
+    >div {
         background-color: rgba(gray, 80%);
         min-width: 300px;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
 
-        > h2, > span {
+        >h2,
+        >span {
             display: block;
             text-align: center;
             padding: 10px;
             width: 100%;
         }
 
-        > h2 {
+        >h2 {
             margin: 0;
             font-size: 24px;
             color: white;
             background-color: rgba(#000, 50%);
         }
 
-        > span {
+        >span {
             color: white;
             font-size: 18px;
         }
 
-        > div {
+        >div {
             background-color: rgba(#000, 20%);
             border-radius: 10px;
             margin: 0 10px 10px 10px;
-            > button {
+
+            >button {
                 border: solid #000 1px;
                 border-radius: 10px;
                 font-size: 20px;
@@ -117,7 +120,7 @@ html, body {
     }
 }
 
-a.button{
+a.button {
     width: 50px;
     height: 75px;
     padding: 10px;
@@ -125,21 +128,23 @@ a.button{
     text-decoration: none;
     color: white;
 
-    &.logout{
+    &.logout {
         background-color: red;
 
     }
-    &.lodge{
+
+    &.lodge {
         background-color: green;
 
     }
-    &.manage{
+
+    &.manage {
         background-color: orange;
 
     }
 }
 
-a.managepage{
+a.managepage {
     width: 50px;
     height: 75px;
     padding: 10px;
@@ -160,19 +165,19 @@ a.managepage{
     width: 100%;
     height: 100%;
 
-    > div {
+    >div {
         display: grid;
         justify-items: center;
         align-content: center;
 
-        > h2 {
+        >h2 {
             color: white;
         }
 
-        > .spinner {
+        >.spinner {
             animation: rotator $duration linear infinite;
 
-            > .path {
+            >.path {
                 stroke-dasharray: $offset;
                 stroke-dashoffset: 0;
                 transform-origin: center;
@@ -191,25 +196,25 @@ a.managepage{
     background: url("/img/index_background.png") no-repeat center center fixed;
     background-size: cover;
 
-    > .login {
+    >.login {
         margin: auto;
         background-color: $LoginBackgroundColor;
         width: 400px;
 
 
-        > .header {
+        >.header {
             background-color: $LoginTitleColor;
             font-size: 24px;
             padding: 10px 0;
             color: white;
         }
 
-        > .infos {
+        >.infos {
             color: white;
             margin-top: 20px;
 
-            > form {
-                > .field {
+            >form {
+                >.field {
                     margin: 10px 20px;
                     display: flex;
                     justify-content: center;
@@ -218,11 +223,11 @@ a.managepage{
                     border-radius: 10px;
                     background-color: rgba($LoginBackgroundColor, 20%);
 
-                    > label {
+                    >label {
                         border-top-left-radius: 10px;
                         border-bottom-left-radius: 10px;
 
-                        > span {
+                        >span {
                             width: 50px;
                             height: 50px;
                             display: flex;
@@ -234,7 +239,7 @@ a.managepage{
                         }
                     }
 
-                    > .textfield {
+                    >.textfield {
                         margin: 0;
                         height: 50px;
                         border: 0;
@@ -261,7 +266,7 @@ a.managepage{
                     }
                 }
 
-                > .btn {
+                >.btn {
                     display: inline-flex;
                     justify-content: center;
                     align-items: center;
@@ -270,7 +275,7 @@ a.managepage{
                     background-color: rgba($LoginBackgroundColor, 40%);
                     margin-bottom: 20px;
 
-                    > *:hover {
+                    >*:hover {
                         cursor: pointer;
                     }
 
@@ -279,13 +284,13 @@ a.managepage{
                         background-color: lighten(rgba($LoginBackgroundColor, 20%), 60%);
                     }
 
-                    > label {
-                        > span {
+                    >label {
+                        >span {
                             padding: 10px 0 10px 10px;
                         }
                     }
 
-                    > input[type="submit"] {
+                    >input[type="submit"] {
                         font-size: 20px;
                         padding: 10px;
                         background-color: #ffffff00;
@@ -298,41 +303,47 @@ a.managepage{
         }
     }
 }
-.managediv100_95{
-    height:100%;
+
+.managediv100_95 {
+    height: 100%;
     width: 95%;
     margin: auto;
 }
-.managediv100_100{
-    height:100%;
-    width:100%;
+
+.managediv100_100 {
+    height: 100%;
+    width: 100%;
 }
-.managedivcenter{
-    height:75%;
-    width:100%;
+
+.managedivcenter {
+    height: 75%;
+    width: 100%;
     display: flex;
 }
-.managetitlediv{
-    height:10%;
+
+.managetitlediv {
+    height: 10%;
     width: 100%;
     padding: 0;
     margin: 0;
-    position:relative;
+    position: relative;
 }
+
 .managetitleleft {
-    position: absolute;
     width: 50%;
     top: 0;
     left: 0;
 }
+
 .managetitleright {
     position: absolute;
     width: 50%;
     top: 0;
     left: 50%;
 }
-.managetilerightupperright{
-    position:absolute;
-    right:0;
-    top:30px;
+
+.managetilerightupperright {
+    position: absolute;
+    right: 0;
+    top: 30px;
 }
