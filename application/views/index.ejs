@@ -2,7 +2,9 @@
 <html lang="en">
 
 <head>
-    <title><%= process.env.Web_Title %></title>
+    <title>
+        <%= process.env.Web_Title %>
+    </title>
     <meta charset="utf-8" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <script src="js/jquery.min.js"></script>
@@ -16,7 +18,9 @@
     <div id="alert" class="alert" style="display:none">
         <div>
             <h2>提示</h2>
-            <span><%= msg %></span>
+            <span>
+                <%= msg %>
+            </span>
             <div><button onclick='$("#alert").fadeOut("slow")''>確認</button></div>
         </div>
     </div>
@@ -54,11 +58,7 @@
     </div>
 
     <script>
-        $(window).on('load', function() {
-            $('.loading').hide();
-        });
-
-        if (<%= Boolean(msg) %>){
+        $(window).on(' load', function () { $('.loading').hide(); }); if (<%= Boolean(msg) %>) {
             $("#alert").fadeIn("slow");
             $("#alert button").focus();
         }

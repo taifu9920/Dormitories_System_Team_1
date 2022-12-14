@@ -32,11 +32,21 @@
     <div id="content">
         <% if (level=="學生" ) {%>
             <h3>This is Student page!</h3>
+            <h4>留言板</h4>
+            <textarea class="form-control" id="board" cols="30" rows="5" placeholder="請留下你想說的話"></textarea>
+            <br>
+            <button id="submit" class="submit_comment">留言</button>
+            <hr>
             <style>
                 #hide {
                     display: none;
                 }
+
+                #board {
+                    border-color: aqua;
+                }
             </style>
+
             <!-- 在這裡弄學生頁面 -->
             <% } else if (level=="舍監" ) { %>
                 <h3>This is Manager page</h3>
