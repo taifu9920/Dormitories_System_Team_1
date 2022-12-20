@@ -155,7 +155,10 @@ app.get("/lodge", auth, function(req, res) {
 });
 
 app.get("/manage", auth, function(req, res) {
-    res.render("manage", { username: req.session.username, level: level_names[req.session.level]});
+    res.render("manage", { username: req.session.username, 
+                            level: level_names[req.session.level],
+                            managers:managers,
+                        students:students});
 });
 
 app.use((req, res) => {
@@ -164,4 +167,36 @@ app.use((req, res) => {
 
 app.listen(process.env["port"], process.env["ip"], () => {
     logger.info(`Server is listening on port number: ${process.env["port"]}`);
+});
+
+
+
+var managers = {};
+var students={};
+DB.query('select * from dormitories_system.managers', function(err, rows, fields) {
+    if (err) throw err;
+    managers = rows;
+  });
+DB.query('select * from dormitories_system.students', function(err, rows, fields) {
+    if (err) throw err;
+    students = rows;
+  });
+  
+
+
+
+
+  app.post("/manage", function(req, res) {
+    /*var M_ID = req.body[M_ID];
+    var Name = req.body[Name];
+    var Email = req.body[Email];
+    var Phone = req.body[Phone];
+    var Password = req.body[Password];*/
+    DB.query("INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values(?,?,?,?,?)", [req.body[M_ID],req.body[Name],req.body[Email],req.body[Phone],req.body[Password]], function(err, rows) {
+        if (err) {
+            console.log(err);
+        }
+        console.log("1 record inserted, ID: ");
+        //res.setHeader(refresh,1);
+    });
 });

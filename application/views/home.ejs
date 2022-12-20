@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>
-        <%= process.env.Web_Title %>
-    </title>
+    <title><%= process.env.Web_Title %></title>
     <meta charset="utf-8" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <script src="js/jquery.min.js"></script>
@@ -16,54 +14,36 @@
         <div>
             <h2>Loading</h2>
             <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30">
-                </circle>
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
             </svg>
         </div>
     </div>
     <h2>您現在位於：首頁</h2>
-    <h1>歡迎！<%= level %>
-            <%= username %>
-    </h1>
+    <h1>歡迎！<%= level %><%= username %></h1>
     <a class="button logout" href="/logout">登出</a>
     <a class="button lodge" href="/lodge">住宿頁面</a>
-    <a id="hide" class="button manage" href="/manage">管理頁面</a>
-
-    <div id="content">
-        <% if (level=="學生" ) {%>
-            <h3>This is Student page!</h3>
-            <h4>留言板</h4>
-            <textarea class="form-control" id="board" cols="30" rows="5" placeholder="請留下你想說的話"></textarea>
-            <br>
-            <button id="submit" class="submit_comment">留言</button>
-            <hr>
-            <style>
-                #hide {
-                    display: none;
-                }
-
-                #board {
-                    border-color: aqua;
-                }
-            </style>
-
-            <!-- 在這裡弄學生頁面 -->
-            <% } else if (level=="舍監" ) { %>
-                <h3>This is Manager page</h3>
-                <!-- 在這裡弄舍監頁面 -->
-
-                <% } else if (level=="管理員" ) { %>
-                    <h3>This is Admin page</h3>
-                    <!-- 在這裡弄管理員頁面 -->
-                    <% } else { %>
-                        <!-- 正常來說不會跑來這 -->
-                        <h3>Something went wrong!!</h3>
-                        <h4>You should have level!</h4>
-                        <% } %>
-    </div>
-
+    <a class="button manage" href="/manage">管理頁面</a>
+	
+	<div id="content">
+	<% if (level == "學生") {%>
+		<h3>This is Student page!</h3>
+		<!-- 在這裡弄學生頁面 -->
+	<% } else if (level == "舍監") { %>
+		<h3>This is Manager page</h3>
+		<!-- 在這裡弄舍監頁面 -->
+		
+	<% } else if (level == "管理員") { %>
+		<h3>This is Admin page</h3>
+		<!-- 在這裡弄管理員頁面 -->
+	<% } else { %>
+		<!-- 正常來說不會跑來這 -->
+		<h3>Something went wrong!!</h3>
+		<h4>You should have level!</h4>
+	<% } %>
+	</div>
+	
     <script>
-        $(window).on('load', function () {
+        $(window).on('load', function() {
             $('.loading').hide();
         });
     </script>

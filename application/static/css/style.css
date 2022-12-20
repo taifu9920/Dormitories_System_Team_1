@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @keyframes rotator {
   0% {
     transform: rotate(0deg);
@@ -289,6 +290,33 @@ a.managepage {
   position: absolute;
   right: 0;
   top: 30px;
+}
+
+.all_light { /*整个弹窗的页面*/
+  opacity: 0.8; /*透明度*/
+  width: 100%; /*宽度*/
+  height: 2300px; /*高度，不能百分百*/
+  background: #000; /*背景色*/
+  position: absolute;
+  top: 0;
+  left: 0; /*定位*/
+  display: none; /*隐藏*/
+  z-index: 2; /*覆盖*/
+}
+
+.contes { /* 弹框的页面*/
+  width: 500px; /*宽度*/
+  height: 500px; /*高度*/
+  background: #fff; /*背景色*/
+  display: none; /*隐藏*/
+  z-index: 2; /*覆盖*/
+  position: absolute;
+  top: 100px;
+  left: 400px; /* 定位*/
+}
+
+input {
+  margin-bottom: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */
