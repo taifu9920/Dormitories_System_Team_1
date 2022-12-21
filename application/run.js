@@ -35,9 +35,10 @@ let logger = winston.createLogger({
             , maxFiles: '31d'
         })
     ]
-, });
+    ,
+});
 
-DB.connect(function(err) {
+DB.connect(function (err) {
     if (err) logger.error(process.env["DB_connect_failed"]);
     else logger.info(process.env["DB_connect_success"]);
 });
@@ -50,7 +51,7 @@ app.set('view engine', 'ejs');
 app.use(session({
     secret: process.env["session_secret"],
     saveUninitialized: false,
-    resave: true, 
+    resave: true,
 }));
 
 app.use(expressWinston.logger({
@@ -64,7 +65,7 @@ app.use(expressWinston.logger({
     , meta: true
     , msg: "{{req.socket.remoteAddress}} ({{req.headers['x-forwarded-for']}}) - {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
     , expressFormat: false
-    , ignoreRoute: function(req, res) { return false; }
+    , ignoreRoute: function (req, res) { return false; }
 }));
 
 app.use("/", express.static("static"));
@@ -73,30 +74,30 @@ app.use(cookieParser());
 
 // Before Login
 
-app.get("/signin", csurf({ cookie: true }), function(req, res) {
+app.get("/signin", csurf({ cookie: true }), function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
     res.render("index", { csrfToken: req.csrfToken(), "msg": cookie });
 });
 
-app.post("/login", express.urlencoded({ extended: false }), csurf({ cookie: true }), function(req, res) {
+app.post("/login", express.urlencoded({ extended: false }), csurf({ cookie: true }), function (req, res) {
     req.session.username = req.body["account"];
     req.session.password = req.body["password"];
     res.redirect("/");
 });
 
-app.get("/logout", function(req, res) {
+app.get("/logout", function (req, res) {
     req.session.destroy();
     res.cookie("msg", "您已登出，請重新登入！", { httpOnly: true });
     res.redirect('/signin');
 });
 
 // After login
-async function auth(req, res, next){
-    try{
+async function auth(req, res, next) {
+    try {
         //System Account Check
-        System = await new Promise((resolve, reject)=>{
-            DB.query("SELECT * FROM dormitories_system.configs where `SC_Tag` like 'owner_%';", function(err, rows){
+        System = await new Promise((resolve, reject) => {
+            DB.query("SELECT * FROM dormitories_system.configs where `SC_Tag` like 'owner_%';", function (err, rows) {
                 if (err) reject(process.env["DB_connect_failed"])
                 else {
                     datas = new Map(rows.map(o => [o.SC_Tag, o.Value]));
@@ -105,8 +106,8 @@ async function auth(req, res, next){
             })
         })
         //Manager Account Check
-        Manager = await new Promise((resolve, reject)=>{
-            DB.query("SELECT M_ID, Password FROM dormitories_system.managers;", function(err, rows){
+        Manager = await new Promise((resolve, reject) => {
+            DB.query("SELECT M_ID, Password FROM dormitories_system.managers;", function (err, rows) {
                 if (err) reject(process.env["DB_connect_failed"])
                 else {
                     datas = new Map(rows.map(o => [o.M_ID, o.Password]));
@@ -115,8 +116,8 @@ async function auth(req, res, next){
             })
         })
         //Student Account Check
-        Student = await new Promise((resolve, reject)=>{
-            DB.query("SELECT S_ID, Password FROM dormitories_system.students;", function(err, rows){
+        Student = await new Promise((resolve, reject) => {
+            DB.query("SELECT S_ID, Password FROM dormitories_system.students;", function (err, rows) {
                 if (err) reject(process.env["DB_connect_failed"])
                 else {
                     datas = new Map(rows.map(o => [o.S_ID, o.Password]));
@@ -125,20 +126,21 @@ async function auth(req, res, next){
             })
         })
         if ((req.session.username == System.get("owner_account")
-        && req.session.password == System.get("owner_password")) 
-        || (Manager.get(req.session.username) == req.session.password
-        && req.session.password != null) 
-        || (Student.get(req.session.username) == req.session.password
-        && req.session.password != null)) {
-            if (req.session.username == System.get("owner_account")) req.session.level=0
-            else if (Manager.get(req.session.username)) req.session.level=1
-            else if (Student.get(req.session.username)) req.session.level=2
-            next()}
-        else{
+            && req.session.password == System.get("owner_password"))
+            || (Manager.get(req.session.username) == req.session.password
+                && req.session.password != null)
+            || (Student.get(req.session.username) == req.session.password
+                && req.session.password != null)) {
+            if (req.session.username == System.get("owner_account")) req.session.level = 0
+            else if (Manager.get(req.session.username)) req.session.level = 1
+            else if (Student.get(req.session.username)) req.session.level = 2
+            next()
+        }
+        else {
             res.cookie("msg", "登入失敗！請重試。", { httpOnly: true });
             res.redirect("/signin");
         }
-    }catch (e){
+    } catch (e) {
         logger.error("Error when auth a user, Error message: " + e);
         req.session.destroy();
         res.cookie("msg", "出錯誤了!\n如無法登入聯繫伺服器管理人員！", { httpOnly: true });
@@ -146,19 +148,22 @@ async function auth(req, res, next){
     }
 }
 
-app.get("/", auth, function(req, res) {
-    res.render("home", { username: req.session.username, level: level_names[req.session.level]});
+app.get("/", auth, function (req, res) {
+    res.render("home", { username: req.session.username, level: level_names[req.session.level] });
 });
 
-app.get("/lodge", auth, function(req, res) {
-    res.render("lodge", { username: req.session.username, level: level_names[req.session.level]});
+app.get("/lodge", auth, function (req, res) {
+    res.render("lodge", { username: req.session.username, level: level_names[req.session.level] });
 });
 
-app.get("/manage", auth, function(req, res) {
-    res.render("manage", { username: req.session.username, 
-                            level: level_names[req.session.level],
-                            managers:managers,
-                        students:students});
+app.get("/manage", auth, function (req, res) {
+    res.render("manage", {
+        username: req.session.username,
+        level: level_names[req.session.level],
+        managers: managers,
+        students: students,
+        comments: comments
+    });
 });
 
 app.use((req, res) => {
@@ -172,27 +177,32 @@ app.listen(process.env["port"], process.env["ip"], () => {
 
 
 var managers = {};
-var students={};
-DB.query('select * from dormitories_system.managers', function(err, rows, fields) {
+var students = {};
+var comments = {};
+DB.query('select * from dormitories_system.managers', function (err, rows, fields) {
     if (err) throw err;
     managers = rows;
-  });
-DB.query('select * from dormitories_system.students', function(err, rows, fields) {
+});
+DB.query('select * from dormitories_system.students', function (err, rows, fields) {
     if (err) throw err;
     students = rows;
-  });
-  
+});
+DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
+    if (err) throw err;
+    comments = rows;
+});
 
 
 
 
-  app.post("/manage", function(req, res) {
+
+app.post("/manage", function (req, res) {
     /*var M_ID = req.body[M_ID];
     var Name = req.body[Name];
     var Email = req.body[Email];
     var Phone = req.body[Phone];
     var Password = req.body[Password];*/
-    DB.query("INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values(?,?,?,?,?)", [req.body[M_ID],req.body[Name],req.body[Email],req.body[Phone],req.body[Password]], function(err, rows) {
+    DB.query("INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values(?,?,?,?,?)", [req.body[M_ID], req.body[Name], req.body[Email], req.body[Phone], req.body[Password]], function (err, rows) {
         if (err) {
             console.log(err);
         }

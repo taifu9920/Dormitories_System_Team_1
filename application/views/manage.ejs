@@ -5,7 +5,7 @@
     <title>
         <%= process.env.Web_Title %>
     </title>
-    
+
     <meta charset="utf-8" />
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <script src="js/jquery.min.js"></script>
@@ -42,12 +42,67 @@
         <% if (level=="學生" ) {%>
             <h3>This is Student page!</h3>
             <!-- 在這裡弄學生頁面 -->
+            <script type="text/javascript">
+                window.onload = function () {
+                    olink12.onclick = function () {
+                        Show_Hidden(odivout12);
+                        Show_Hidden(odiv12);
+                    }
+                    olink11.onclick = function () {
+                        Show_Hidden(odivout11);
+                        Show_Hidden(odiv11);
+                    }
+                }
+            </script>
+            <a href="#11" id="link11" class="managepage">瀏覽\收起留言板</a>
+            <div id="divoutside11" class="managedivcenter" style="display:none">
+                <div id="thediv11" class="managediv100_95" style="display:none">
+                    <table>
+                        <tr>
+                            <th>C_ID</th>
+                            <th>S_ID</th>
+                            <th>Content</th>
+                            <th>When</th>
+                        </tr>
+                        <% for ( var i=0 ; i < comments.length ; i++){ %>
+                            <tr>
+                                <td>
+                                    <%= comments[i].C_ID %>
+                                </td>
+                                <td>
+                                    <%= comments[i].S_ID %>
+                                </td>
+                                <td>
+                                    <%= comments[i].Content %>
+                                </td>
+                                <td>
+                                    <%= comments[i].When %>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </table>
+                </div>
+            </div><br>
+
+            <a href="#12" id="link12" class="managepage">顯示\隱藏公告</a>
+            <div id="divoutside12" claSS="managedivcenter" style="display:none">
+                <div id="thediv12" class="managediv100_95" style="display:none">
+
+                </div>
+            </div>
             <% } else if (level=="舍監" ) { %>
                 <h3>This is Manager page</h3>
                 <!-- 在這裡弄舍監頁面 -->
                 <script type="text/javascript">
                     window.onload = function () {
-        
+                        olink12.onclick = function () {
+                            Show_Hidden(odivout12);
+                            Show_Hidden(odiv12);
+                        }
+                        olink11.onclick = function () {
+                            Show_Hidden(odivout11);
+                            Show_Hidden(odiv11);
+                        }
                         olink10.onclick = function () {
                             Show_Hidden(odivout10);
                             Show_Hidden(odiv10);
@@ -57,7 +112,7 @@
                             Show_Hidden(odiv9);
                         }
                     }
-            </script>
+                </script>
                 <a href="#9" id="link9" class="managepage">顯示\隱藏學生資料</a>
                 <div id="divoutside9" claSS="managedivcenter" style="display:none">
                     <div id="thediv9" class="managediv100_95" style="display:none">
@@ -70,6 +125,42 @@
                     <div id="thediv10" class="managediv100_95" style="display:none">
 
                     </div>
+                </div><br>
+                <a href="#11" id="link11" class="managepage">顯示\隱藏留言板</a>
+                <div id="divoutside11" class="managedivcenter" style="display:none">
+                    <div id="thediv11" class="managediv100_95" style="display:none">
+                        <table>
+                            <tr>
+                                <th>C_ID</th>
+                                <th>S_ID</th>
+                                <th>Content</th>
+                                <th>When</th>
+                            </tr>
+                            <% for ( var i=0 ; i < comments.length ; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= comments[i].C_ID %>
+                                    </td>
+                                    <td>
+                                        <%= comments[i].S_ID %>
+                                    </td>
+                                    <td>
+                                        <%= comments[i].Content %>
+                                    </td>
+                                    <td>
+                                        <%= comments[i].When %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                        </table>
+                    </div>
+                </div><br>
+
+                <a href="#12" id="link12" class="managepage">顯示\隱藏公告</a>
+                <div id="divoutside12" claSS="managedivcenter" style="display:none">
+                    <div id="thediv12" class="managediv100_95" style="display:none">
+
+                    </div>
                 </div>
 
                 <% } else if (level=="管理員" ) { %>
@@ -77,7 +168,7 @@
                     <!-- 在這裡弄管理員頁面 -->
                     <script type="text/javascript">
                         window.onload = function () {
-            
+
                             olink1.onclick = function () {
                                 Show_Hidden(odivout1);
                                 Show_Hidden(odiv1);
@@ -111,7 +202,7 @@
                                 Show_Hidden(odiv8);
                             }
                         }
-                </script>
+                    </script>
                     <form name="manage" action="" method="post">
                         <div>
                             <label for="M_ID">Enter your M_ID: </label>
@@ -271,47 +362,53 @@
     </div>
     <br>
     <script>
-            var olink1 = document.getElementById("link1");
-            var odiv1 = document.getElementById("thediv1");
-            var olink2 = document.getElementById("link2");
-            var odiv2 = document.getElementById("thediv2");
-            var olink3 = document.getElementById("link3");
-            var odiv3 = document.getElementById("thediv3");
-            var olink4 = document.getElementById("link4");
-            var odiv4 = document.getElementById("thediv4");
-            var olink5 = document.getElementById("link5");
-            var odiv5 = document.getElementById("thediv5");
-            var olink6 = document.getElementById("link6");
-            var odiv6 = document.getElementById("thediv6");
-            var olink7 = document.getElementById("link7");
-            var odiv7 = document.getElementById("thediv7");
-            var olink8 = document.getElementById("link8");
-            var odiv8 = document.getElementById("thediv8");
-            var olink9 = document.getElementById("link9");
-            var odiv9 = document.getElementById("thediv9");
-            var olink10 = document.getElementById("link10");
-            var odiv10 = document.getElementById("thediv10");
-            var odivout1 = document.getElementById("divoutside1");
-            var odivout2 = document.getElementById("divoutside2");
-            var odivout3 = document.getElementById("divoutside3");
-            var odivout4 = document.getElementById("divoutside4");
-            var odivout5 = document.getElementById("divoutside5");
-            var odivout6 = document.getElementById("divoutside6");
-            var odivout7 = document.getElementById("divoutside7");
-            var odivout8 = document.getElementById("divoutside8");
-            var odivout9 = document.getElementById("divoutside9");
-            var odivout10 = document.getElementById("divoutside10");
-            function Show_Hidden(obj) {
-                if (obj.style.display == "block") {
-                    obj.style.display = 'none';
-                }
-                else {
-                    obj.style.display = 'block';
-                }
+        var olink1 = document.getElementById("link1");
+        var odiv1 = document.getElementById("thediv1");
+        var olink2 = document.getElementById("link2");
+        var odiv2 = document.getElementById("thediv2");
+        var olink3 = document.getElementById("link3");
+        var odiv3 = document.getElementById("thediv3");
+        var olink4 = document.getElementById("link4");
+        var odiv4 = document.getElementById("thediv4");
+        var olink5 = document.getElementById("link5");
+        var odiv5 = document.getElementById("thediv5");
+        var olink6 = document.getElementById("link6");
+        var odiv6 = document.getElementById("thediv6");
+        var olink7 = document.getElementById("link7");
+        var odiv7 = document.getElementById("thediv7");
+        var olink8 = document.getElementById("link8");
+        var odiv8 = document.getElementById("thediv8");
+        var olink9 = document.getElementById("link9");
+        var odiv9 = document.getElementById("thediv9");
+        var olink10 = document.getElementById("link10");
+        var odiv10 = document.getElementById("thediv10");
+        var olink11 = document.getElementById("link11");
+        var odiv11 = document.getElementById("thediv11");
+        var olink12 = document.getElementById("link12");
+        var odiv12 = document.getElementById("thediv12");
+        var odivout1 = document.getElementById("divoutside1");
+        var odivout2 = document.getElementById("divoutside2");
+        var odivout3 = document.getElementById("divoutside3");
+        var odivout4 = document.getElementById("divoutside4");
+        var odivout5 = document.getElementById("divoutside5");
+        var odivout6 = document.getElementById("divoutside6");
+        var odivout7 = document.getElementById("divoutside7");
+        var odivout8 = document.getElementById("divoutside8");
+        var odivout9 = document.getElementById("divoutside9");
+        var odivout10 = document.getElementById("divoutside10");
+        var odivout11 = document.getElementById("divoutside11");
+        var odivout12 = document.getElementById("divoutside12");
+        function Show_Hidden(obj) {
+            if (obj.style.display == "block") {
+                obj.style.display = 'none';
             }
-            $(window).on('load', function () {
-                $('.loading').hide();
-            });
+            else {
+                obj.style.display = 'block';
+            }
+        }
+        $(window).on('load', function () {
+            $('.loading').hide();
+        });
     </script>
 </body>
 
