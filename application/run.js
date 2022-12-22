@@ -196,17 +196,19 @@ DB.query('select * from dormitories_system.comments', function (err, rows, field
 
 
 
-app.post("/manage", function (req, res) {
-    /*var M_ID = req.body[M_ID];
-    var Name = req.body[Name];
-    var Email = req.body[Email];
-    var Phone = req.body[Phone];
-    var Password = req.body[Password];*/
-    DB.query("INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values(?,?,?,?,?)", [req.body[M_ID], req.body[Name], req.body[Email], req.body[Phone], req.body[Password]], function (err, rows) {
+
+
+app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), function (req, res) {
+    var M_ID = req.body.M_ID;
+    var Name = req.body.Name;
+    var Email = req.body.Email;
+    var Phone = req.body.Phone;
+    var Password = req.body.Password;
+    var sql=`INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
+    DB.query(sql, function (err, data) {
         if (err) {
-            console.log(err);
+            throw err;
         }
-        console.log("1 record inserted, ID: ");
-        //res.setHeader(refresh,1);
+        else{res.setHeader(refresh,1);}
     });
 });
