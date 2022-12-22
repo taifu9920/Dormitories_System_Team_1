@@ -84,12 +84,27 @@
                 </div>
             </div><br>
 
-            <a href="#12" id="link12" class="managepage">顯示\隱藏公告</a>
-            <div id="divoutside12" claSS="managedivcenter" style="display:none">
+            <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
+            <div id="divoutside12" class="managedivcenter" style="display:none">
                 <div id="thediv12" class="managediv100_95" style="display:none">
-
+                    <table>
+                        <tr>
+                            <th>SC_Tag</th>
+                            <th>Value</th>
+                        </tr>
+                        <% for ( var i=0 ; i < configs.length ; i++){ %>
+                            <tr>
+                                <td>
+                                    <%= configs[i].SC_Tag %>
+                                </td>
+                                <td>
+                                    <%= configs[i].Value %>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </table>
                 </div>
-            </div>
+            </div><br>
             <% } else if (level=="舍監" ) { %>
                 <h3>This is Manager page</h3>
                 <!-- 在這裡弄舍監頁面 -->
@@ -204,6 +219,7 @@
                         }
                     </script>
                     <form name="manage" action="" method="post">
+                        <input type="hidden" name="_csurf" value="<%= csrfToken %>">
                         <div>
                             <label for="M_ID">Enter your M_ID: </label>
                             <input type="text" name="M_ID" id="M_ID" placeholder="M_ID" required>
@@ -233,7 +249,7 @@
 
 
                     <a href="#1" id="link1" class="managepage">顯示\隱藏大樓資料</a>
-                    <div id="divoutside1" claSS="managedivcenter" style="display:none">
+                    <div id="divoutside1" class="managedivcenter" style="display:none">
                         <div id="thediv1" class="managediv100_95" style="display:none">
                             <table>
                                 <tr>

@@ -156,13 +156,15 @@ app.get("/lodge", auth, function (req, res) {
     res.render("lodge", { username: req.session.username, level: level_names[req.session.level] });
 });
 
-app.get("/manage", auth, function (req, res) {
+app.get("/manage", csurf({ cookie: true }), auth, function (req, res) {
     res.render("manage", {
         username: req.session.username,
         level: level_names[req.session.level],
         managers: managers,
         students: students,
-        comments: comments
+        comments: comments,
+        configs: configs,
+        csrfToken: req.csrfToken()
     });
 });
 
@@ -175,10 +177,10 @@ app.listen(process.env["port"], process.env["ip"], () => {
 });
 
 
-
 var managers = {};
 var students = {};
 var comments = {};
+var configs = {};
 DB.query('select * from dormitories_system.managers', function (err, rows, fields) {
     if (err) throw err;
     managers = rows;
@@ -191,24 +193,24 @@ DB.query('select * from dormitories_system.comments', function (err, rows, field
     if (err) throw err;
     comments = rows;
 });
+DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
+    if (err) throw err;
+    configs = rows;
+});
 
 
 
 
 
-
-
-app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), function (req, res) {
+app.post("/manage", express.urlencoded({ extended: false }), function (req, res) {
     var M_ID = req.body.M_ID;
     var Name = req.body.Name;
     var Email = req.body.Email;
     var Phone = req.body.Phone;
     var Password = req.body.Password;
-    var sql=`INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
+    var sql = `INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
     DB.query(sql, function (err, data) {
-        if (err) {
-            throw err;
-        }
-        else{res.setHeader(refresh,1);}
+        if (err) throw err;
+        else { res.setHeader(refresh, 1); }
     });
 });
