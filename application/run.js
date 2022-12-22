@@ -168,6 +168,19 @@ app.get("/manage", csurf({ cookie: true }), auth, function (req, res) {
     });
 });
 
+app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, function (req, res) {
+    var M_ID = req.body.M_ID;
+    var Name = req.body.Name;
+    var Email = req.body.Email;
+    var Phone = req.body.Phone;
+    var Password = req.body.Password;
+    var sql = `INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
+    DB.query(sql, function (err, data) {
+        if (err) throw err;
+        else { res.setHeader(refresh, 1); }
+    });
+});
+
 app.use((req, res) => {
     res.status(404).send("Request 404");
 })
@@ -196,21 +209,4 @@ DB.query('select * from dormitories_system.comments', function (err, rows, field
 DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
     if (err) throw err;
     configs = rows;
-});
-
-
-
-
-
-app.post("/manage", express.urlencoded({ extended: false }), function (req, res) {
-    var M_ID = req.body.M_ID;
-    var Name = req.body.Name;
-    var Email = req.body.Email;
-    var Phone = req.body.Phone;
-    var Password = req.body.Password;
-    var sql = `INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
-    DB.query(sql, function (err, data) {
-        if (err) throw err;
-        else { res.setHeader(refresh, 1); }
-    });
 });
