@@ -200,8 +200,8 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             resolve(rows);
         });
     }).catch(err => { });
-
-    res.render("manage", { username: req.session.username, level: level_names[req.session.level], managers: managers, students: students, comments: comments, configs: configs, csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
+    if (req.session.level == 1 || req.session.level == 0) res.render("manage", { username: req.session.username, level: level_names[req.session.level], managers: managers, students: students, comments: comments, configs: configs, csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
+    else res.redirect("/");
 });
 
 app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
