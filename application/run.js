@@ -12,7 +12,7 @@ const express = require("express")
     , cookieParser = require('cookie-parser')
     , compression = require('compression')
     , session = require('express-session');
-    
+
 // logger init
 let logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info'
@@ -229,11 +229,7 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
 app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
-    res.render("manage", {
-        username: req.session.username,
-        level: level_names[req.session.level],
-        managers: managers,
-        students: students,
+    res.render("lodge", {
         comments: comments,
         configs: configs,
         csrfToken: req.csrfToken(),
@@ -254,7 +250,7 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
     }).catch(err => {
         res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
     });
-    res.redirect('/manage');
+    res.redirect('/lodge');
 });
 
 app.use((req, res) => {
