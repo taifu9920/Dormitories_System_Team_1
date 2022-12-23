@@ -30,7 +30,8 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div>
             <label for="Announcement" class="label_text">Update Announcement: </label>
-            <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update" required>
+            <input type="text" class="form_button" name="Announcement" id="Announcement"
+              placeholder="<%=configs[0].Value %>" required>
           </div>
           <div>
             <input type="submit" class="form_button" name="submit" value="update">
@@ -178,8 +179,8 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div>
               <label for="Announcement" class="label_text">Update Announcement: </label>
-              <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update"
-                required>
+              <input type="text" class="form_button" name="Announcement" id="Announcement"
+                placeholder="<%=configs[0].Value %>" required>
             </div>
             <div>
               <input type="submit" class="form_button" name="submit" value="update">

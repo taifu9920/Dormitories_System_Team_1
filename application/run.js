@@ -156,13 +156,8 @@ async function auth(req, res, next) {
     }
 }
 
-app.get("/", auth, function (req, res) {
-    let cookie = req.cookies["msg"];
-    res.clearCookie("msg", { httpOnly: true });
-    res.render("home", { username: req.session.username, level: level_names[req.session.level], msg: cookie, route: req.baseUrl + req.path });
-});
-
-app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
+/*學生瀏覽公告&留言板*/
+app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
 
@@ -178,14 +173,26 @@ app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
             resolve(rows);
         });
     }).catch(err => { });
-
-    if (req.session.level == 2) res.render("lodge", {
-        username: req.session.username, level: level_names[req.session.level],
+    if (req.session.level == 2) res.render("home", {
+        username: req.session.username,
+        level: level_names[req.session.level],
         comments: comments, configs: configs, csrfToken: req.csrfToken(),
         msg: cookie, route: req.baseUrl + req.path
     });
     else res.redirect("/");
 });
+
+app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+    if (req.session.level == 2) res.render("lodge", {
+        username: req.session.username, level: level_names[req.session.level],
+        csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
+    });
+    else res.redirect("/");
+});
+
+
 
 app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     let cookie = req.cookies["msg"];
@@ -251,10 +258,8 @@ app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
     res.render("manage", {
-        comments: comments,
-        configs: configs,
-        csrfToken: req.csrfToken(),
-        msg: cookie
+        comments: comments, configs: configs,
+        csrfToken: req.csrfToken(), msg: cookie
     });
 });
 app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
@@ -264,14 +269,41 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
     await new Promise((resolve, reject) => {
         DB.query(sql, [anno], function (err, data) {
             if (err) reject(err);
-            else {
-                resolve();
-            }
+            else { resolve(); }
         });
     }).catch(err => {
         res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
     });
     res.redirect('/manage');
+});
+
+app.get("/comm", csurf({ cookie: true }), auth, function (req, res) {
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+    res.render("home", { comments: comments, csrfToken: req.csrfToken(), msg: cookie });
+});
+app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    res.cookie("msg", "新增留言成功。", { httpOnly: true });
+    var S_ID = req.body.S_ID;
+    var Content = req.body.Content; const dateObject = new Date();
+    const date = (`0 ${dateObject.getDate()}`).slice(-2);
+    const month = (`0 ${dateObject.getMonth() + 1}`).slice(-2);
+    const year = dateObject.getFullYear();
+    const hours = dateObject.getHours();
+    const minutes = dateObject.getMinutes();
+    const seconds = dateObject.getSeconds();
+    // prints date in YYYY-MM-DD format
+    var When = `${year}-${month}-${date}`;
+    var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`, `When`) VALUES (?,?,?)';
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [S_ID, Content, When], function (err, data) {
+            if (err) { reject(err); console.log(err); }
+            else { resolve(); }
+        });
+    }).catch(err => {
+        res.cookie("msg", "新增留言失敗！請重試。", { httpOnly: true });
+    });
+    res.redirect('/');
 });
 
 app.use((req, res) => {

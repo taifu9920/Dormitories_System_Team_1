@@ -17,6 +17,21 @@
             }
           }
         </script>
+        <form name="comments" action="/comm" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div>
+            <label for="S_ID">Enter your S_ID: </label>
+            <input type="text" class="form_button" name="S_ID" id="S_ID" placeholder="S_ID" required>
+          </div>
+          <div>
+            <label for="Content" class="label_text">insert Comment: </label>
+            <input type="text" class="form_button" name="Content" id="Content" placeholder="Content" required>
+          </div>
+          <div>
+            <input type="submit" class="form_button" name="submit" value="insert">
+            <input type="reset" class="form_button" value="Reset">
+          </div>
+        </form>
         <a href="#11" id="link11" class="managepage">瀏覽\收起留言板</a>
         <div id="divoutside11" class="managedivcenter" style="display:none">
           <div id="thediv11" class="managediv100_95" style="display:none">
@@ -46,7 +61,6 @@
             </table>
           </div>
         </div><br>
-
         <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
         <div id="divoutside12" class="managedivcenter" style="display:none">
           <div id="thediv12" class="managediv100_95" style="display:none">
@@ -64,6 +78,31 @@
             </table>
           </div>
         </div><br>
+        <script>
+          var olink11 = document.getElementById("link11");
+          var odiv11 = document.getElementById("thediv11");
+          var olink12 = document.getElementById("link12");
+          var odiv12 = document.getElementById("thediv12");
+          var odivout11 = document.getElementById("divoutside11");
+          var odivout12 = document.getElementById("divoutside12");
+
+          function Show_Hidden(obj) {
+            if (obj.style.display == "block") {
+              obj.style.display = "none";
+            } else {
+              obj.style.display = "block";
+            }
+          }
+          $(window).on("load", function () {
+            $(".loading").hide();
+          });
+
+
+          if (<%= Boolean(msg) %>) {
+            $("#alert").fadeIn("slow");
+            $("#alert button").focus();
+          }
+        </script>
         <!-- 在這裡弄學生頁面 -->
         <% } else if (level=="舍監" ) { %>
           <h3>This is Manager page</h3>
