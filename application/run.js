@@ -1,13 +1,6 @@
 require('dotenv').config();
 require('winston-daily-rotate-file')
-var mysql = require("mysql");
-var DB = mysql.createConnection({
-    host: process.env["DB_IP"],
-    user: process.env["DB_User"],
-    port: process.env["DB_Port"],
-    password: process.env["DB_Pass"],
-    database: process.env["DB_Schema"]
-});
+// setup
 
 level_names = ["管理員", "舍監", "學生"]
 
@@ -19,7 +12,8 @@ const express = require("express")
     , cookieParser = require('cookie-parser')
     , compression = require('compression')
     , session = require('express-session');
-
+    
+// logger init
 let logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info'
     , format: combine(
@@ -38,15 +32,27 @@ let logger = winston.createLogger({
     ,
 });
 
+// DB connection init
+var mysql = require("mysql");
+var DB = mysql.createConnection({
+    host: process.env["DB_IP"],
+    user: process.env["DB_User"],
+    port: process.env["DB_Port"],
+    password: process.env["DB_Pass"],
+    database: process.env["DB_Schema"]
+});
+
 DB.connect(function (err) {
     if (err) logger.error(process.env["DB_connect_failed"]);
     else logger.info(process.env["DB_connect_success"]);
 });
 
+// Web init
 let app = express();
-app.use(compression())
-app.set('view engine', 'ejs');
 
+app.use(compression())
+app.engine('ejs', require("ejs-locals"))
+app.set('view engine', 'ejs');
 
 app.use(session({
     secret: process.env["session_secret"],
@@ -54,6 +60,7 @@ app.use(session({
     resave: true,
 }));
 
+// Setup logger with web
 app.use(expressWinston.logger({
     transports: [new winston.transports.Console()]
     , format: combine(
@@ -68,16 +75,17 @@ app.use(expressWinston.logger({
     , ignoreRoute: function (req, res) { return false; }
 }));
 
+// Routes
 app.use("/", express.static("static"));
 
 app.use(cookieParser());
 
-// Before Login
+// -- Before Login --
 
 app.get("/signin", csurf({ cookie: true }), function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
-    res.render("index", { csrfToken: req.csrfToken(), "msg": cookie });
+    res.render("index", { csrfToken: req.csrfToken(), msg: cookie });
 });
 
 app.post("/login", express.urlencoded({ extended: false }), csurf({ cookie: true }), function (req, res) {
@@ -92,7 +100,7 @@ app.get("/logout", function (req, res) {
     res.redirect('/signin');
 });
 
-// After login
+// -- After login --
 async function auth(req, res, next) {
     try {
         //System Account Check
@@ -149,23 +157,51 @@ async function auth(req, res, next) {
 }
 
 app.get("/", auth, function (req, res) {
-    res.render("home", { username: req.session.username, level: level_names[req.session.level] });
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+    res.render("home", { username: req.session.username, level: level_names[req.session.level], msg: cookie, route: req.baseUrl + req.path });
 });
 
 app.get("/lodge", auth, function (req, res) {
-    res.render("lodge", { username: req.session.username, level: level_names[req.session.level] });
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+    if (req.session.level == 2) res.render("lodge", { username: req.session.username, level: level_names[req.session.level], msg: cookie, route: req.baseUrl + req.path });
+    else res.redirect("/");
 });
 
-app.get("/manage", csurf({ cookie: true }), auth, function (req, res) {
-    res.render("manage", {
-        username: req.session.username,
-        level: level_names[req.session.level],
-        managers: managers,
-        students: students,
-        comments: comments,
-        configs: configs,
-        csrfToken: req.csrfToken()
-    });
+app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+
+    managers = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.managers', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    students = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.students', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    comments = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    configs = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    res.render("manage", { username: req.session.username, level: level_names[req.session.level], managers: managers, students: students, comments: comments, configs: configs, csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
 });
 
 app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, function (req, res) {
@@ -187,26 +223,4 @@ app.use((req, res) => {
 
 app.listen(process.env["port"], process.env["ip"], () => {
     logger.info(`Server is listening on port number: ${process.env["port"]}`);
-});
-
-
-var managers = {};
-var students = {};
-var comments = {};
-var configs = {};
-DB.query('select * from dormitories_system.managers', function (err, rows, fields) {
-    if (err) throw err;
-    managers = rows;
-});
-DB.query('select * from dormitories_system.students', function (err, rows, fields) {
-    if (err) throw err;
-    students = rows;
-});
-DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
-    if (err) throw err;
-    comments = rows;
-});
-DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
-    if (err) throw err;
-    configs = rows;
 });
