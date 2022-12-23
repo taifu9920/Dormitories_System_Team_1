@@ -29,7 +29,7 @@
         <form name="Announcement" action="/anno" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div>
-            <label for="Announcement" class="label_text">Enter your Announcement: </label>
+            <label for="Announcement" class="label_text">Update Announcement: </label>
             <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update" required>
           </div>
           <div>
@@ -50,7 +50,7 @@
 
           </div>
         </div><br>
-        <a href="#11" id="link11" class="managepage">顯示\隱藏留言板</a>
+        <a href="#11" id="link11" class="managepage">瀏覽\隱藏留言板</a>
         <div id="divoutside11" class="managedivcenter" style="display:none">
           <div id="thediv11" class="managediv100_95" style="display:none">
             <table>
@@ -80,8 +80,8 @@
           </div>
         </div><br>
 
-        <a href="#12" id="link12" class="managepage">顯示\隱藏公告</a>
-        <div id="divoutside12" claSS="managedivcenter" style="display:none">
+        <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
+        <div id="divoutside12" class="managedivcenter" style="display:none">
           <div id="thediv12" class="managediv100_95" style="display:none">
             <table>
               <tr>
@@ -136,6 +136,14 @@
                 Show_Hidden(odivout8);
                 Show_Hidden(odiv8);
               }
+              olink11.onclick = function () {
+                Show_Hidden(odivout11);
+                Show_Hidden(odiv11);
+              }
+              olink12.onclick = function () {
+                Show_Hidden(odivout12);
+                Show_Hidden(odiv12);
+              }
             }
           </script>
           <form name="manage" action="" method="post">
@@ -166,6 +174,65 @@
             </div>
           </form>
 
+          <form name="Announcement" action="/anno" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div>
+              <label for="Announcement" class="label_text">Update Announcement: </label>
+              <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update"
+                required>
+            </div>
+            <div>
+              <input type="submit" class="form_button" name="submit" value="update">
+              <input type="reset" class="form_button" value="Reset">
+            </div>
+          </form>
+          <a href="#11" id="link11" class="managepage">瀏覽\隱藏留言板</a>
+          <div id="divoutside11" class="managedivcenter" style="display:none">
+            <div id="thediv11" class="managediv100_95" style="display:none">
+              <table>
+                <tr>
+                  <th>C_ID</th>
+                  <th>S_ID</th>
+                  <th>Content</th>
+                  <th>When</th>
+                </tr>
+                <% for ( var i=0 ; i < comments.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= comments[i].C_ID %>
+                    </td>
+                    <td>
+                      <%= comments[i].S_ID %>
+                    </td>
+                    <td>
+                      <%= comments[i].Content %>
+                    </td>
+                    <td>
+                      <%= comments[i].When %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+            </div>
+          </div><br>
+
+          <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
+          <div id="divoutside12" class="managedivcenter" style="display:none">
+            <div id="thediv12" class="managediv100_95" style="display:none">
+              <table>
+                <tr>
+                  <th>Value</th>
+                </tr>
+
+                <tr>
+                  <td>
+                    <%= configs[0].Value %>
+                  </td>
+                </tr>
+
+              </table>
+            </div>
+          </div><br>
           <a href="#1" id="link1" class="managepage">顯示\隱藏大樓資料</a>
           <div id="divoutside1" class="managedivcenter" style="display:none">
             <div id="thediv1" class="managediv100_95" style="display:none">

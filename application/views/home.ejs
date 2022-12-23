@@ -1,80 +1,80 @@
 <% layout('layout') %>
 
-<%- include header %>
+  <%- include header %>
 
-<div id="content">
-  <% if (level=="學生" ) {%>
-  <h3>This is Student page!</h3>
-  <script type="text/javascript">
-    window.onload = function() {
-      olink12.onclick = function() {
-        Show_Hidden(odivout12);
-        Show_Hidden(odiv12);
-      }
-      olink11.onclick = function() {
-        Show_Hidden(odivout11);
-        Show_Hidden(odiv11);
-      }
-    }
-  </script>
-  <a href="#11" id="link11" class="managepage">瀏覽\收起留言板</a>
-  <div id="divoutside11" class="managedivcenter" style="display:none">
-    <div id="thediv11" class="managediv100_95" style="display:none">
-      <table>
-        <tr>
-          <th>C_ID</th>
-          <th>S_ID</th>
-          <th>Content</th>
-          <th>When</th>
-        </tr>
-        <% for ( var i=0 ; i < comments.length ; i++){ %>
-        <tr>
-          <td>
-            <%= comments[i].C_ID %>
-          </td>
-          <td>
-            <%= comments[i].S_ID %>
-          </td>
-          <td>
-            <%= comments[i].Content %>
-          </td>
-          <td>
-            <%= comments[i].When %>
-          </td>
-        </tr>
-        <% } %>
-      </table>
+    <div id="content">
+      <% if (level=="學生" ) {%>
+        <h3>This is Student page!</h3>
+        <script type="text/javascript">
+          window.onload = function () {
+            olink12.onclick = function () {
+              Show_Hidden(odivout12);
+              Show_Hidden(odiv12);
+            }
+            olink11.onclick = function () {
+              Show_Hidden(odivout11);
+              Show_Hidden(odiv11);
+            }
+          }
+        </script>
+        <a href="#11" id="link11" class="managepage">瀏覽\收起留言板</a>
+        <div id="divoutside11" class="managedivcenter" style="display:none">
+          <div id="thediv11" class="managediv100_95" style="display:none">
+            <table>
+              <tr>
+                <th>C_ID</th>
+                <th>S_ID</th>
+                <th>Content</th>
+                <th>When</th>
+              </tr>
+              <% for ( var i=0 ; i < comments.length ; i++){ %>
+                <tr>
+                  <td>
+                    <%= comments[i].C_ID %>
+                  </td>
+                  <td>
+                    <%= comments[i].S_ID %>
+                  </td>
+                  <td>
+                    <%= comments[i].Content %>
+                  </td>
+                  <td>
+                    <%= comments[i].When %>
+                  </td>
+                </tr>
+                <% } %>
+            </table>
+          </div>
+        </div><br>
+
+        <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
+        <div id="divoutside12" class="managedivcenter" style="display:none">
+          <div id="thediv12" class="managediv100_95" style="display:none">
+            <table>
+              <tr>
+                <th>Value</th>
+              </tr>
+
+              <tr>
+                <td>
+                  <%= configs[0].Value %>
+                </td>
+              </tr>
+
+            </table>
+          </div>
+        </div><br>
+        <!-- 在這裡弄學生頁面 -->
+        <% } else if (level=="舍監" ) { %>
+          <h3>This is Manager page</h3>
+          <!-- 在這裡弄舍監頁面 -->
+
+          <% } else if (level=="管理員" ) { %>
+            <h3>This is Admin page</h3>
+            <!-- 在這裡弄管理員頁面 -->
+            <% } else { %>
+              <!-- 正常來說不會跑來這 -->
+              <h3>Something went wrong!!</h3>
+              <h4>You should have level!</h4>
+              <% } %>
     </div>
-  </div><br>
-
-  <a href="#12" id="link12" class="managepage">瀏覽\隱藏公告</a>
-  <div id="divoutside12" class="managedivcenter" style="display:none">
-    <div id="thediv12" class="managediv100_95" style="display:none">
-      <table>
-        <tr>
-          <th>Value</th>
-        </tr>
-
-        <tr>
-          <td>
-            <%= configs[0].Value %>
-          </td>
-        </tr>
-
-      </table>
-    </div>
-  </div><br>
-  <!-- 在這裡弄學生頁面 -->
-  <% } else if (level=="舍監" ) { %>
-  <h3>This is Manager page</h3>
-  <!-- 在這裡弄舍監頁面 -->
-
-  <% } else if (level=="管理員" ) { %>
-  <h3>This is Admin page</h3>
-  <!-- 在這裡弄管理員頁面 -->
-  <% } else { %>
-  <!-- 正常來說不會跑來這 -->
-  <h3>Something went wrong!!</h3>
-  <h4>You should have level!</h4>
-  <% } %>
-</div>

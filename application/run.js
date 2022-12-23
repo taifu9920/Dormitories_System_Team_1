@@ -162,10 +162,28 @@ app.get("/", auth, function (req, res) {
     res.render("home", { username: req.session.username, level: level_names[req.session.level], msg: cookie, route: req.baseUrl + req.path });
 });
 
-app.get("/lodge", auth, function (req, res) {
+app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
-    if (req.session.level == 2) res.render("lodge", { username: req.session.username, level: level_names[req.session.level], msg: cookie, route: req.baseUrl + req.path });
+
+    comments = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+    configs = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    if (req.session.level == 2) res.render("lodge", {
+        username: req.session.username, level: level_names[req.session.level],
+        comments: comments, configs: configs, csrfToken: req.csrfToken(),
+        msg: cookie, route: req.baseUrl + req.path
+    });
     else res.redirect("/");
 });
 
@@ -200,7 +218,12 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             resolve(rows);
         });
     }).catch(err => { });
-    if (req.session.level == 1 || req.session.level == 0) res.render("manage", { username: req.session.username, level: level_names[req.session.level], managers: managers, students: students, comments: comments, configs: configs, csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
+    if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
+        username: req.session.username,
+        level: level_names[req.session.level], managers: managers,
+        students: students, comments: comments, configs: configs,
+        csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
+    });
     else res.redirect("/");
 });
 
@@ -216,9 +239,7 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
     await new Promise((resolve, reject) => {
         DB.query(sql, [M_ID, Name, Email, Phone, Password], function (err, data) {
             if (err) reject(err);
-            else {
-                resolve();
-            }
+            else { resolve(); }
         });
     }).catch(err => {
         res.cookie("msg", "新增失敗！請重試。", { httpOnly: true });
