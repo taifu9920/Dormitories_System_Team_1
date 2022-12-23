@@ -1,11 +1,11 @@
 <div class="navBar">
     <a class="button logout" href="/logout">登出</a>
 
-	<% if (level == "學生") {%>
+	<% if (level == "學生" && route != "/lodge") {%>
     <a class="button lodge" href="/lodge">住宿頁面</a>
     <% } %>
     
-    <% if (level == "舍監" || level == "管理員") { %>
+    <% if ((level == "舍監" || level == "管理員")  && route != "/manage") { %>
     <a class="button manage" href="/manage">管理頁面</a>
     <% } %>
     
