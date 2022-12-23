@@ -229,7 +229,7 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
 app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
-    res.render("lodge", {
+    res.render("manage", {
         comments: comments,
         configs: configs,
         csrfToken: req.csrfToken(),
@@ -238,10 +238,10 @@ app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
 });
 app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     res.cookie("msg", "更新公告成功。", { httpOnly: true });
-    var anno = req.body.Value;
-    var sql = 'UPDATE dormitories_system.configs SET Value = ? WHERE SC_Tag = "announcement"';
+    var anno = req.body.Announcement;
+    var sql = 'UPDATE `dormitories_system`.`configs` SET `Value` = ? WHERE (`SC_Tag` = "announcement")';
     await new Promise((resolve, reject) => {
-        DB.query(sql, anno, function (err, data) {
+        DB.query(sql, [anno], function (err, data) {
             if (err) reject(err);
             else {
                 resolve();
@@ -250,7 +250,7 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
     }).catch(err => {
         res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
     });
-    res.redirect('/lodge');
+    res.redirect('/manage');
 });
 
 app.use((req, res) => {
