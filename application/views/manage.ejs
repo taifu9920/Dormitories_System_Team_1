@@ -13,6 +13,16 @@
 </head>
 
 <body>
+    <div id="alert" class="alert" style="display:none">
+        <div>
+            <h2>提示</h2>
+            <span>
+                <%= msg %>
+            </span>
+            <div><button onclick="$('#alert').fadeOut('slow')">確認</button></div>
+        </div>
+    </div>
+
     <div class="loading">
         <div>
             <h2>Loading</h2>
@@ -89,19 +99,15 @@
                 <div id="thediv12" class="managediv100_95" style="display:none">
                     <table>
                         <tr>
-                            <th>SC_Tag</th>
                             <th>Value</th>
                         </tr>
-                        <% for ( var i=0 ; i < configs.length ; i++){ %>
-                            <tr>
-                                <td>
-                                    <%= configs[i].SC_Tag %>
-                                </td>
-                                <td>
-                                    <%= configs[i].Value %>
-                                </td>
-                            </tr>
-                            <% } %>
+
+                        <tr>
+                            <td>
+                                <%= configs[0].Value %>
+                            </td>
+                        </tr>
+
                     </table>
                 </div>
             </div><br>
@@ -128,15 +134,27 @@
                         }
                     }
                 </script>
-                <a href="#9" id="link9" class="managepage">顯示\隱藏學生資料</a>
-                <div id="divoutside9" claSS="managedivcenter" style="display:none">
-                    <div id="thediv9" class="managediv100_95" style="display:none">
-
+                <form name="Announcement" action="/anno" method="post">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div>
+                        <label for="Announcement" class="label_text">Enter your Announcement: </label>
+                        <input type="text" class="form_button" name="Announcement" id="Announcement"
+                            placeholder="update" required>
                     </div>
+                    <div>
+                        <input type="submit" class="form_button" name="submit" value="update">
+                        <input type="reset" class="form_button" value="Reset">
+                    </div>
+                </form>
+                <a href="#9" id="link9" class="managepage">顯示\隱藏學生資料</a>
+                <div id="divoutside9" class="managedivcenter" style="display:none">
+                    <div id="thediv9" class="managediv100_95" style="display:none">
+                    </div>
+
                 </div><br>
 
                 <a href="#10" id="link10" class="managepage">顯示\隱藏違規紀錄</a>
-                <div id="divoutside10" claSS="managedivcenter" style="display:none">
+                <div id="divoutside10" class="managedivcenter" style="display:none">
                     <div id="thediv10" class="managediv100_95" style="display:none">
 
                     </div>
@@ -174,7 +192,22 @@
                 <a href="#12" id="link12" class="managepage">顯示\隱藏公告</a>
                 <div id="divoutside12" claSS="managedivcenter" style="display:none">
                     <div id="thediv12" class="managediv100_95" style="display:none">
+                        <table>
+                            <tr>
+                                <th>SC_Tag</th>
+                                <th>Value</th>
+                            </tr>
 
+                            <tr>
+                                <td>
+                                    <%= configs[0].SC_Tag %>
+                                </td>
+                                <td>
+                                    <%= configs[0].Value %>
+                                </td>
+                            </tr>
+
+                        </table>
                     </div>
                 </div>
 
@@ -241,8 +274,8 @@
                             <input type="text" name="Password" id="Password" placeholder="Password" required>
                         </div>
                         <div>
-                            <input type='submit' name='submit button' value='add'>
-                            <input type='reset' value='Reset'>
+                            <input type="submit" name="submit" value="add">
+                            <input type="reset" value="Reset">
                         </div>
                     </form>
 
@@ -416,15 +449,21 @@
         var odivout12 = document.getElementById("divoutside12");
         function Show_Hidden(obj) {
             if (obj.style.display == "block") {
-                obj.style.display = 'none';
+                obj.style.display = "none";
             }
             else {
-                obj.style.display = 'block';
+                obj.style.display = "block";
             }
         }
-        $(window).on('load', function () {
-            $('.loading').hide();
+        $(window).on("load", function () {
+            $(".loading").hide();
         });
+
+
+        if (<%= Boolean(msg) %>) {
+            $("#alert").fadeIn("slow");
+            $("#alert button").focus();
+        }
     </script>
 </body>
 
