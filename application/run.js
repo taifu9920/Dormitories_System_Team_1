@@ -204,17 +204,57 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     res.render("manage", { username: req.session.username, level: level_names[req.session.level], managers: managers, students: students, comments: comments, configs: configs, csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
 });
 
-app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, function (req, res) {
+app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     var M_ID = req.body.M_ID;
     var Name = req.body.Name;
     var Email = req.body.Email;
     var Phone = req.body.Phone;
     var Password = req.body.Password;
-    var sql = `INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) values("${M_ID}","${Name}","${Email}","${Phone}","${Password}",)`
-    DB.query(sql, function (err, data) {
-        if (err) throw err;
-        else { res.setHeader(refresh, 1); }
+    var sql = 'INSERT INTO dormitories_system.managers (M_ID, Name, Email, Phone, Password) VALUES (?,?,?,?,?)';
+
+    res.cookie("msg", "新增成功。", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [M_ID, Name, Email, Phone, Password], function (err, data) {
+            if (err) reject(err);
+            else {
+                resolve();
+            }
+        });
+    }).catch(err => {
+        res.cookie("msg", "新增失敗！請重試。", { httpOnly: true });
     });
+    res.redirect('/manage');
+});
+
+app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
+    let cookie = req.cookies["msg"];
+    res.clearCookie("msg", { httpOnly: true });
+    res.render("manage", {
+        username: req.session.username,
+        level: level_names[req.session.level],
+        managers: managers,
+        students: students,
+        comments: comments,
+        configs: configs,
+        csrfToken: req.csrfToken(),
+        msg: cookie
+    });
+});
+app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    res.cookie("msg", "更新公告成功。", { httpOnly: true });
+    var anno = req.body.Value;
+    var sql = 'UPDATE dormitories_system.configs SET Value = ? WHERE SC_Tag = "announcement"';
+    await new Promise((resolve, reject) => {
+        DB.query(sql, anno, function (err, data) {
+            if (err) reject(err);
+            else {
+                resolve();
+            }
+        });
+    }).catch(err => {
+        res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
+    });
+    res.redirect('/manage');
 });
 
 app.use((req, res) => {
