@@ -179,7 +179,7 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
         comments: comments, configs: configs, csrfToken: req.csrfToken(),
         msg: cookie, route: req.baseUrl + req.path
     });
-    else res.redirect("/");
+    else res.render("home", { username: req.session.username, level: level_names[req.session.level], csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
 });
 
 app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
@@ -293,7 +293,7 @@ app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true 
     const minutes = dateObject.getMinutes();
     const seconds = dateObject.getSeconds();
     // prints date in YYYY-MM-DD format
-    var When = `${year}-${month}-${date}`;
+    var When = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
     var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`, `When`) VALUES (?,?,?)';
     await new Promise((resolve, reject) => {
         DB.query(sql, [S_ID, Content, When], function (err, data) {
