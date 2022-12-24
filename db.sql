@@ -66,7 +66,7 @@ CREATE TABLE `configs` (
 
 LOCK TABLES `configs` WRITE;
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
-INSERT INTO `configs` VALUES ('owner_account','admin'),('owner_password','12345');
+INSERT INTO `configs` VALUES ('Announcement','Content'),('owner_account','admin'),('owner_password','12345');
 /*!40000 ALTER TABLE `configs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +118,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES ('M1234567','黃舍監','test@mail.nuk.edu.tw','0902345678','aaa123');
+INSERT INTO `managers` VALUES (' ',' ','a@a.a',' ',' '),('M1234567','黃舍監','test@mail.nuk.edu.tw','0902345678','aaa123');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -164,8 +164,8 @@ CREATE TABLE `registers` (
   `Year` int unsigned NOT NULL,
   `Term` int unsigned NOT NULL,
   `When` datetime NOT NULL,
-  `Approved` tinyint unsigned NOT NULL,
-  `Payment` tinyint unsigned NOT NULL,
+  `Approved` int unsigned NOT NULL,
+  `Payment` int unsigned NOT NULL,
   PRIMARY KEY (`Reg_ID`),
   KEY `S_ID_idx` (`S_ID`),
   CONSTRAINT `S_ID2` FOREIGN KEY (`S_ID`) REFERENCES `students` (`S_ID`)
@@ -308,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-13  3:33:41
+-- Dump completed on 2022-12-25  0:23:20
