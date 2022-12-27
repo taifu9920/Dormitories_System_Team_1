@@ -1,10 +1,32 @@
-$background-color: #666;
-$second_bg-color: #555;
+$arrow_bg_color: #555;
 $LoginTitleColor: rgba(#000, 50%);
 $LoginBackgroundColor: rgba(#333, 50%);
 
 $offset: 187;
 $duration: 1.4s;
+@import "../node_modules/bootstrap/scss/functions";
+
+$body-bg: #666; // body background color
+$body-color: #111; // body text color
+
+// Include any default variable overrides here
+
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+
+// Include any default map overrides here
+
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/containers";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/helpers";
+@import "../node_modules/bootstrap/scss/utilities/api";
 
 /*
     Loading animation
@@ -111,7 +133,10 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    background-color: $background-color;
+}
+
+.container{
+    max-width:none;
 }
 
 // Alert popup for all pages
@@ -204,7 +229,7 @@ body {
     margin-left: -14px;
 
     0% {
-        top: -100px;
+        top: 50px;
     }
 
     100% {
@@ -214,11 +239,11 @@ body {
 
 @include keyframes(success-slidedown) {
     0% {
-        top: 200px;
+        top: -50px;
     }
 
     100% {
-        top: 300px;
+        top: 100px;
     }
 }
 
@@ -238,7 +263,7 @@ body {
 
 .Q {
     width: auto;
-    height: 100px;
+    height: 50px;
 }
 
 .left_green {
@@ -246,8 +271,8 @@ body {
         repeating-linear-gradient(45deg,
             green,
             green 10px,
-            $second_bg-color 10px,
-            $second_bg-color 20px);
+            $arrow_bg_color 10px,
+            $arrow_bg_color 20px);
 }
 
 .right_green {
@@ -255,8 +280,8 @@ body {
         repeating-linear-gradient(-45deg,
             green,
             green 10px,
-            $second_bg-color 10px,
-            $second_bg-color 20px
+            $arrow_bg_color 10px,
+            $arrow_bg_color 20px
             /* determines size */
         );
 }
@@ -264,19 +289,20 @@ body {
 #success-up {
     animation: success-slideup 1s 1;
     animation-fill-mode: forwards;
-    top: 200px;
+    top: 50px;
 }
 
 #success-down {
     animation: success-slidedown 1s 1;
     animation-fill-mode: forwards;
-    top: -100px;
+    top: -50px;
 }
 
 .header_title {
     font-size: 40px;
+    line-height: 30px;
+    padding: 10px;
     font-weight: bold;
-    height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -297,7 +323,7 @@ body {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 100px;
+    height: 50px;
 }
 
 /*
@@ -306,35 +332,33 @@ body {
 
 // navbar
 .navBar {
-    margin: 10px;
-    height: auto;
-    display: flex;
+    margin: 5px 0;
+}
 
-    >a {
-        margin: 0 5px 0 0;
-        width: auto;
-        padding: 10px 15px;
-        text-decoration: none;
-        color: white;
+.button {
+    border-radius: 10%;
+    margin: 0 10px 0 0;
+    width: auto;
+    line-height: 40px;
+    height: 40px;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: white;
 
-        &.logout {
-            background-color: red;
+    &.logout {
+        background-color: #DE3E35;
+    }
 
-        }
+    &.lodge {
+        background-color: #1B9A59;
+    }
 
-        &.lodge {
-            background-color: green;
+    &.manage {
+        background-color: #F78000;
+    }
 
-        }
-
-        &.manage {
-            background-color: orange;
-
-        }
-
-        &:last-child {
-            margin-right: 0;
-        }
+    &:last-child {
+        margin-right: 0;
     }
 }
 
@@ -452,6 +476,7 @@ body {
                         border: 0;
                         color: white;
                         line-height: 24px;
+                        margin: 0;
                     }
                 }
             }

@@ -18,11 +18,12 @@
   },
   "homepage": "https://github.com/taifu9920/JS-ServiceTerminal#readme",
   "dependencies": {
+    "bootstrap": "^5.3.0-alpha1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "csurf": "^1.11.0",
     "dotenv": "^16.0.3",
-    "ejs": ">=3.1.7",
+    "ejs": ">=3.1.8",
     "ejs-locals": "^1.0.2",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
