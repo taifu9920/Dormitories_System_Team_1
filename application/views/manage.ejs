@@ -30,8 +30,7 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div>
             <label for="Announcement" class="label_text">Update Announcement: </label>
-            <input type="text" class="form_button" name="Announcement" id="Announcement"
-              placeholder="<%=configs[0].Value %>" required>
+            <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update" required>
           </div>
           <div>
             <input type="submit" class="form_button" name="submit" value="update">
@@ -145,9 +144,18 @@
                 Show_Hidden(odivout12);
                 Show_Hidden(odiv12);
               }
-            }
+              //彈窗
+
+              //彈窗結束
           </script>
-          <form name="manage" action="" method="post">
+
+          <a href="#11" id="link11" class="managepage">新增舍監</a>
+
+
+
+
+
+          <form name="add_manager" action="add_manager" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div>
               <label for="M_ID">Enter your M_ID: </label>
@@ -175,18 +183,23 @@
             </div>
           </form>
 
+
+
           <form name="Announcement" action="/anno" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div>
               <label for="Announcement" class="label_text">Update Announcement: </label>
-              <input type="text" class="form_button" name="Announcement" id="Announcement"
-                placeholder="<%=configs[0].Value %>" required>
+              <input type="text" class="form_button" name="Announcement" id="Announcement" placeholder="update"
+                required>
             </div>
             <div>
               <input type="submit" class="form_button" name="submit" value="update">
               <input type="reset" class="form_button" value="Reset">
             </div>
           </form>
+
+
+
           <a href="#11" id="link11" class="managepage">瀏覽\隱藏留言板</a>
           <div id="divoutside11" class="managedivcenter" style="display:none">
             <div id="thediv11" class="managediv100_95" style="display:none">
@@ -239,6 +252,92 @@
             <div id="thediv1" class="managediv100_95" style="display:none">
               <table>
                 <tr>
+                  <th>D_ID</th>
+                  <th>Name</th>
+                </tr>
+                <% for ( var i=0 ; i < dormitories.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= dormitories[i].D_ID %>
+                    </td>
+                    <td>
+                      <%= dormitories[i].Name %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+            </div>
+          </div>
+          <br>
+          <a href="#2" id="link2" class="managepage">顯示\隱藏房間資料</a>
+          <div id="divoutside2" claSS="managedivcenter" style="display:none">
+            <div id="thediv2" class="managediv100_95" style="display:none">
+
+              <table>
+                <tr>
+                  <th>R_ID</th>
+                  <th>D_ID</th>
+                  <th>Peoples</th>
+                  <th>Costs</th>
+                </tr>
+                <% for ( var i=0 ; i < rooms.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= rooms[i].R_ID %>
+                    </td>
+                    <td>
+                      <%= rooms[i].D_ID %>
+                    </td>
+                    <td>
+                      <%= rooms[i].Peoples %>
+                    </td>
+                    <td>
+                      <%= rooms[i].Costs %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+              <% } %>
+
+            </div>
+          </div><br>
+          <a href="#3" id="link3" class="managepage">顯示\隱藏設備資料</a>
+          <div id="divoutside3" claSS="managedivcenter" style="display:none">
+            <div id="thediv3" class="managediv100_95" style="display:none">
+
+              <table>
+                <tr>
+                  <th>RC_ID</th>
+                  <th>R_ID</th>
+                  <th>Name</th>
+                  <th>Amount</th>
+                </tr>
+                <% for ( var i=0 ; i < room_contents.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= room_contents[i].RC_ID %>
+                    </td>
+                    <td>
+                      <%= room_contents[i].R_ID %>
+                    </td>
+                    <td>
+                      <%= room_contents[i].Name %>
+                    </td>
+                    <td>
+                      <%= room_contents[i].Amount %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+
+            </div>
+          </div><br>
+          <a href="#4" id="link4" class="managepage">顯示\隱藏舍監資料</a>
+          <div id="divoutside4" claSS="managedivcenter" style="display:none">
+            <div id="thediv4" class="managediv100_95" style="display:none">
+
+              <table>
+                <tr>
                   <th>M_ID</th>
                   <th>Name</th>
                   <th>Email</th>
@@ -265,12 +364,12 @@
                   </tr>
                   <% } %>
               </table>
+
             </div>
-          </div>
-          <br>
-          <a href="#2" id="link2" class="managepage">顯示\隱藏房間資料</a>
-          <div id="divoutside2" claSS="managedivcenter" style="display:none">
-            <div id="thediv2" class="managediv100_95" style="display:none">
+          </div><br>
+          <a href="#5" id="link5" class="managepage">顯示\隱藏學生資料</a>
+          <div id="divoutside5" claSS="managedivcenter" style="display:none">
+            <div id="thediv5" class="managediv100_95" style="display:none">
 
               <table>
                 <tr>
@@ -316,25 +415,6 @@
                   </tr>
                   <% } %>
               </table>
-              <% } %>
-
-            </div>
-          </div><br>
-          <a href="#3" id="link3" class="managepage">顯示\隱藏設備資料</a>
-          <div id="divoutside3" claSS="managedivcenter" style="display:none">
-            <div id="thediv3" class="managediv100_95" style="display:none">
-
-            </div>
-          </div><br>
-          <a href="#4" id="link4" class="managepage">顯示\隱藏舍監資料</a>
-          <div id="divoutside4" claSS="managedivcenter" style="display:none">
-            <div id="thediv4" class="managediv100_95" style="display:none">
-
-            </div>
-          </div><br>
-          <a href="#5" id="link5" class="managepage">顯示\隱藏學生資料</a>
-          <div id="divoutside5" claSS="managedivcenter" style="display:none">
-            <div id="thediv5" class="managediv100_95" style="display:none">
 
             </div>
           </div><br>
@@ -342,11 +422,93 @@
           <div id="divoutside6" claSS="managedivcenter" style="display:none">
             <div id="thediv6" class="managediv100_95" style="display:none">
 
+              <table>
+                <tr>
+                  <th>Reg_ID</th>
+                  <th>S_ID</th>
+                  <th>Year</th>
+                  <th>Term</th>
+                  <th>When</th>
+                  <th>Approved</th>
+                  <th>Payment</th>
+                </tr>
+                <% for ( var i=0 ; i < registers.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= registers[i].S_ID %>
+                    </td>
+                    <td>
+                      <%= registers[i].Name %>
+                    </td>
+                    <td>
+                      <%= registers[i].Year %>
+                    </td>
+                    <td>
+                      <%= registers[i].Dept_Name %>
+                    </td>
+                    <td>
+                      <%= registers[i].Email %>
+                    </td>
+                    <td>
+                      <%= registers[i].Phone %>
+                    </td>
+                    <td>
+                      <%= registers[i].Sex %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+
             </div>
           </div><br>
           <a href="#7" id="link7" class="managepage">顯示\隱藏繳費狀態</a>
           <div id="divoutside7" claSS="managedivcenter" style="display:none">
             <div id="thediv7" class="managediv100_95" style="display:none">
+
+              <table>
+                <tr>
+                  <th>S_ID</th>
+                  <th>Name</th>
+                  <th>Year</th>
+                  <th>Dept_Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Sex</th>
+                  <th>R_ID</th>
+                  <th>Password</th>
+                </tr>
+                <% for ( var i=0 ; i < students.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= students[i].S_ID %>
+                    </td>
+                    <td>
+                      <%= students[i].Name %>
+                    </td>
+                    <td>
+                      <%= students[i].Year %>
+                    </td>
+                    <td>
+                      <%= students[i].Dept_Name %>
+                    </td>
+                    <td>
+                      <%= students[i].Email %>
+                    </td>
+                    <td>
+                      <%= students[i].Phone %>
+                    </td>
+                    <td>
+                      <%= students[i].Sex %>
+                    </td>
+                    <td>
+                      <%= students[i].R_ID %>
+                    </td>
+                    <td>
+                      <%= students[i].Password %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
 
             </div>
           </div>
@@ -354,61 +516,126 @@
           <a href="#8" id="link8" class="managepage">顯示\隱藏核可通知</a>
           <div id="divoutside8" claSS="managedivcenter" style="display:none">
             <div id="thediv8" class="managediv100_95" style="display:none">
+
+              <table>
+                <tr>
+                  <th>S_ID</th>
+                  <th>Name</th>
+                  <th>Year</th>
+                  <th>Dept_Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Sex</th>
+                  <th>R_ID</th>
+                  <th>Password</th>
+                </tr>
+                <% for ( var i=0 ; i < students.length ; i++){ %>
+                  <tr>
+                    <td>
+                      <%= students[i].S_ID %>
+                    </td>
+                    <td>
+                      <%= students[i].Name %>
+                    </td>
+                    <td>
+                      <%= students[i].Year %>
+                    </td>
+                    <td>
+                      <%= students[i].Dept_Name %>
+                    </td>
+                    <td>
+                      <%= students[i].Email %>
+                    </td>
+                    <td>
+                      <%= students[i].Phone %>
+                    </td>
+                    <td>
+                      <%= students[i].Sex %>
+                    </td>
+                    <td>
+                      <%= students[i].R_ID %>
+                    </td>
+                    <td>
+                      <%= students[i].Password %>
+                    </td>
+                  </tr>
+                  <% } %>
+              </table>
+
             </div>
           </div>
     </div>
     <script>
-      var olink1 = document.getElementById("link1");
-      var odiv1 = document.getElementById("thediv1");
-      var olink2 = document.getElementById("link2");
-      var odiv2 = document.getElementById("thediv2");
-      var olink3 = document.getElementById("link3");
-      var odiv3 = document.getElementById("thediv3");
-      var olink4 = document.getElementById("link4");
-      var odiv4 = document.getElementById("thediv4");
-      var olink5 = document.getElementById("link5");
-      var odiv5 = document.getElementById("thediv5");
-      var olink6 = document.getElementById("link6");
-      var odiv6 = document.getElementById("thediv6");
-      var olink7 = document.getElementById("link7");
-      var odiv7 = document.getElementById("thediv7");
-      var olink8 = document.getElementById("link8");
-      var odiv8 = document.getElementById("thediv8");
-      var olink9 = document.getElementById("link9");
-      var odiv9 = document.getElementById("thediv9");
-      var olink10 = document.getElementById("link10");
-      var odiv10 = document.getElementById("thediv10");
-      var olink11 = document.getElementById("link11");
-      var odiv11 = document.getElementById("thediv11");
-      var olink12 = document.getElementById("link12");
-      var odiv12 = document.getElementById("thediv12");
-      var odivout1 = document.getElementById("divoutside1");
-      var odivout2 = document.getElementById("divoutside2");
-      var odivout3 = document.getElementById("divoutside3");
-      var odivout4 = document.getElementById("divoutside4");
-      var odivout5 = document.getElementById("divoutside5");
-      var odivout6 = document.getElementById("divoutside6");
-      var odivout7 = document.getElementById("divoutside7");
-      var odivout8 = document.getElementById("divoutside8");
-      var odivout9 = document.getElementById("divoutside9");
-      var odivout10 = document.getElementById("divoutside10");
-      var odivout11 = document.getElementById("divoutside11");
-      var odivout12 = document.getElementById("divoutside12");
-
-      function Show_Hidden(obj) {
-        if (obj.style.display == "block") {
-          obj.style.display = "none";
-        } else {
-          obj.style.display = "block";
+        //彈窗
+        let btn = document.querySelector('.btn-pop')
+        //获得弹窗
+        let popEl = document.querySelector('.pop')
+        btn.onclick = function () {
+          popEl.style.display = 'flex'
         }
-      }
-      $(window).on("load", function () {
-        $(".loading").hide();
-      });
+        //获得关闭按钮
+        let btnClose = document.querySelector('.close')
+        btnClose.onclick = function () {
+          popEl.style.display = 'none'
+        }
+        popEl.onclick = function (e) {
+          console.log(e)
+          if (e.target == popEl) {
+            popEl.style.display = 'none'
+          }
+        }
+        //彈窗結束
+        var olink1 = document.getElementById("link1");
+        var odiv1 = document.getElementById("thediv1");
+        var olink2 = document.getElementById("link2");
+        var odiv2 = document.getElementById("thediv2");
+        var olink3 = document.getElementById("link3");
+        var odiv3 = document.getElementById("thediv3");
+        var olink4 = document.getElementById("link4");
+        var odiv4 = document.getElementById("thediv4");
+        var olink5 = document.getElementById("link5");
+        var odiv5 = document.getElementById("thediv5");
+        var olink6 = document.getElementById("link6");
+        var odiv6 = document.getElementById("thediv6");
+        var olink7 = document.getElementById("link7");
+        var odiv7 = document.getElementById("thediv7");
+        var olink8 = document.getElementById("link8");
+        var odiv8 = document.getElementById("thediv8");
+        var olink9 = document.getElementById("link9");
+        var odiv9 = document.getElementById("thediv9");
+        var olink10 = document.getElementById("link10");
+        var odiv10 = document.getElementById("thediv10");
+        var olink11 = document.getElementById("link11");
+        var odiv11 = document.getElementById("thediv11");
+        var olink12 = document.getElementById("link12");
+        var odiv12 = document.getElementById("thediv12");
+        var odivout1 = document.getElementById("divoutside1");
+        var odivout2 = document.getElementById("divoutside2");
+        var odivout3 = document.getElementById("divoutside3");
+        var odivout4 = document.getElementById("divoutside4");
+        var odivout5 = document.getElementById("divoutside5");
+        var odivout6 = document.getElementById("divoutside6");
+        var odivout7 = document.getElementById("divoutside7");
+        var odivout8 = document.getElementById("divoutside8");
+        var odivout9 = document.getElementById("divoutside9");
+        var odivout10 = document.getElementById("divoutside10");
+        var odivout11 = document.getElementById("divoutside11");
+        var odivout12 = document.getElementById("divoutside12");
+
+        function Show_Hidden(obj) {
+          if (obj.style.display == "block") {
+            obj.style.display = "none";
+          } else {
+            obj.style.display = "block";
+          }
+        }
+        $(window).on("load", function () {
+          $(".loading").hide();
+        });
 
 
-      if (<%= Boolean(msg) %>) {
-        $("#alert").fadeIn("slow");
-        $("#alert button").focus();
-      }
+        if (<%= Boolean(msg) %>) {
+          $("#alert").fadeIn("slow");
+          $("#alert button").focus();
+        }
     </script>

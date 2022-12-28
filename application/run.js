@@ -225,10 +225,41 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             resolve(rows);
         });
     }).catch(err => { });
+
+    dormitories = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.dormitories', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    rooms = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.rooms', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    room_contents = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.room_contents', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    registers = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.registers', function (err, rows, fields) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
         username: req.session.username,
         level: level_names[req.session.level], managers: managers,
         students: students, comments: comments, configs: configs,
+        dormitories:dormitories,rooms:rooms,room_contents:room_contents,registers:registers,
         csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
     });
     else res.redirect("/");
