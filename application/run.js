@@ -277,13 +277,7 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
     res.redirect('/manage');
 });
 
-app.get("/comm", csurf({ cookie: true }), auth, function (req, res) {
-    let cookie = req.cookies["msg"];
-    res.clearCookie("msg", { httpOnly: true });
-    res.render("home", { comments: comments, csrfToken: req.csrfToken(), msg: cookie });
-});
 app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
-    res.cookie("msg", "新增留言成功。", { httpOnly: true });
     var S_ID = req.body.S_ID;
     var Content = req.body.Content; const dateObject = new Date();
     const date = (`0 ${dateObject.getDate()}`).slice(-2);
@@ -295,6 +289,7 @@ app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true 
     // prints date in YYYY-MM-DD format
     var When = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
     var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`, `When`) VALUES (?,?,?)';
+    res.cookie("msg", "新增留言成功。", { httpOnly: true });
     await new Promise((resolve, reject) => {
         DB.query(sql, [S_ID, Content, When], function (err, data) {
             if (err) { reject(err); console.log(err); }

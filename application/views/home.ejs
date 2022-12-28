@@ -5,40 +5,61 @@
 <div id="content" class="container">
   <% if (level=="學生" ) {%>
   <div class="row">
+    <div class="col pb-2">
+      <div class="card border-light">
+        <div class="card-body">
+          <% if (configs[0].Value != "" ) {%>
+          【公告】 <%= configs[0].Value %>
+          <% } else { %>
+          【暫無公告】
+          <% } %>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col">
-      <div class="card border-light text-bg-dark mb-3" style="max-width: 18rem;">
-        <div class="card-header">Header</div>
+      <div class="card border-light">
+        <div class="card-header bg-transparent border-light text-center">住宿申請</div>
         <div class="card-body">
-          <h5 class="card-title">Light card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text">
+            WIP
+
+          </p>
           <a class="button logout" href="/logout">登出</a>
         </div>
       </div>
     </div>
     <div class="col">
-      <% for ( var i=0 ; i < comments.length ; i++){ %>
-      <%= comments[i].S_ID %>
-      <%= comments[i].Content %>
-      <%= comments[i].When %>
-      <% } %>
-      <%= configs[0].Value %>
+      <div class="card border-light">
+        <div class="card-header bg-transparent border-light text-center">留言板</div>
+        <div class="card-body">
+          <% for ( var i=0 ; i < comments.length ; i++){ %>
+          <%= comments[i].S_ID %>
+          <%= comments[i].Content %>
+          <%= comments[i].When %>
+          <% } %>
+        </div>
+        <div class="card-footer bg-transparent border-light" style="padding: 0!important;">
+          <form name="comments" action="/comm" method="post" class="row">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="col flex-nowrap">
+              <div class="input-group">
+                <button class="btn btn-outline-light" type="button" id="button-addon2" style="border-top-left-radius: 0;"><%= username %></button>
+                <div class="form-floating">
+                  <input type="text" class="form-control" id="floatingInputGroup1" placeholder="留言" required>
+                  <label for="floatingInputGroup1">留言</label>
+                </div>
+                <input class="btn btn-outline-light" type="submit" id="button-addon2" style="border-top-right-radius: 0;" value="送出"></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 
 
-  <form name="comments" action="/comm" method="post">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div>
-      <label for="Content" class="label_text">insert Comment: </label>
-      <input type="text" class="form_button" name="Content" id="Content" placeholder="Content" required>
-    </div>
-    <div>
-      <input type="submit" class="form_button" name="submit" value="insert">
-      <input type="reset" class="form_button" value="Reset">
-    </div>
-  </form>
 
   <!-- 在這裡弄學生頁面 -->
   <% } else if (level=="舍監" ) { %>
