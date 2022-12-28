@@ -28,12 +28,12 @@ CREATE TABLE `comments` (
   `C_ID` int unsigned NOT NULL AUTO_INCREMENT,
   `S_ID` varchar(10) NOT NULL,
   `Content` varchar(300) NOT NULL,
-  `When` datetime NOT NULL,
+  `When` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`C_ID`),
   UNIQUE KEY `C_ID_UNIQUE` (`C_ID`),
   KEY `S_ID_idx` (`S_ID`),
   CONSTRAINT `S_ID` FOREIGN KEY (`S_ID`) REFERENCES `students` (`S_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +42,7 @@ CREATE TABLE `comments` (
 
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+INSERT INTO `comments` VALUES (4,'A1095512','abc','2022-12-27 20:56:53'),(6,'A1095512','adsdads','2022-12-27 21:32:45'),(7,'A1095512','afdsf','2022-12-27 21:32:50'),(8,'A1095512','dsadsad','2022-12-27 21:33:47'),(10,'A1095512','abfdfsdf','2022-12-28 11:41:35'),(11,'A1095512','afdsdbfsdfbdsfbsdb','2022-12-28 11:45:11'),(12,'A1095512','fbwwsrtnyhrefrhjfed','2022-12-28 11:45:15'),(13,'A1095512','fdsfsdfsdfsd','2022-12-28 11:45:22');
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,7 +67,7 @@ CREATE TABLE `configs` (
 
 LOCK TABLES `configs` WRITE;
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
-INSERT INTO `configs` VALUES ('Announcement','Content'),('owner_account','admin'),('owner_password','12345');
+INSERT INTO `configs` VALUES ('Announcement','abc'),('owner_account','admin'),('owner_password','12345');
 /*!40000 ALTER TABLE `configs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,7 +164,7 @@ CREATE TABLE `registers` (
   `S_ID` varchar(10) NOT NULL,
   `Year` int unsigned NOT NULL,
   `Term` int unsigned NOT NULL,
-  `When` datetime NOT NULL,
+  `When` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Approved` int unsigned NOT NULL,
   `Payment` int unsigned NOT NULL,
   PRIMARY KEY (`Reg_ID`),
@@ -282,7 +283,7 @@ CREATE TABLE `violation_records` (
   `V_ID` int unsigned NOT NULL AUTO_INCREMENT,
   `S_ID` varchar(10) NOT NULL,
   `Content` varchar(300) NOT NULL,
-  `When` datetime NOT NULL,
+  `When` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`V_ID`),
   UNIQUE KEY `V_ID_UNIQUE` (`V_ID`),
   KEY `S_ID_idx` (`S_ID`),
@@ -308,4 +309,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-12-25 12:12:14
+-- Dump completed on 2022-12-28 11:48:11

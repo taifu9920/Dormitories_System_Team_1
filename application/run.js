@@ -285,14 +285,6 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
     res.redirect('/manage');
 });
 
-app.get("/anno", csurf({ cookie: true }), auth, function (req, res) {
-    let cookie = req.cookies["msg"];
-    res.clearCookie("msg", { httpOnly: true });
-    res.render("manage", {
-        comments: comments, configs: configs,
-        csrfToken: req.csrfToken(), msg: cookie
-    });
-});
 app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     res.cookie("msg", "更新公告成功。", { httpOnly: true });
     var anno = req.body.Announcement;
@@ -309,24 +301,16 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
 });
 
 app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
-    var S_ID = req.body.S_ID;
-    var Content = req.body.Content; const dateObject = new Date();
-    const date = (`0 ${dateObject.getDate()}`).slice(-2);
-    const month = (`0 ${dateObject.getMonth() + 1}`).slice(-2);
-    const year = dateObject.getFullYear();
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    const seconds = dateObject.getSeconds();
     // prints date in YYYY-MM-DD format
-    var When = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
-    var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`, `When`) VALUES (?,?,?)';
+    var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`) VALUES (?,?)';
     res.cookie("msg", "新增留言成功。", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [S_ID, Content, When], function (err, data) {
+        DB.query(sql, [req.session.username, req.body.Content], function (err, data) {
             if (err) { reject(err); console.log(err); }
             else { resolve(); }
         });
     }).catch(err => {
+        console.log(err);
         res.cookie("msg", "新增留言失敗！請重試。", { httpOnly: true });
     });
     res.redirect('/');

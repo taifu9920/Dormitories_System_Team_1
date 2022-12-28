@@ -7,7 +7,9 @@ $duration: 1.4s;
 @import "../node_modules/bootstrap/scss/functions";
 
 $body-bg: #666; // body background color
-$body-color: #111; // body text color
+$body-color: #fff; // body text color
+$font-size-base: 0.5rem;
+$line-height-base: 1.25;
 
 // Include any default variable overrides here
 
@@ -158,10 +160,6 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-}
-
-.container{
-    max-width:none;
 }
 
 // Alert popup for all pages

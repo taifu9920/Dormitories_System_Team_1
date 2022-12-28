@@ -1,14 +1,14 @@
 <div class="container navBar">
     <div class="row">
         <div class="col">
-            <a class="button logout" href="/logout">登出</a>
+            <a class="button logout fs-4" href="/logout">登出</a>
             
             <% if ((level == "舍監" || level == "管理員")  && route != "/manage") { %>
-            <a class="button manage" href="/manage">管理頁面</a>
+            <a class="button manage fs-4" href="/manage">管理頁面</a>
             <% } %>
             
             <% if (route != "/") {%>
-            <a class="button lodge" href="/">回到首頁</a>
+            <a class="button lodge fs-4" href="/">回到首頁</a>
             <% } %>
         </div>
     </div>
