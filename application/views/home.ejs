@@ -3,41 +3,43 @@
 <%- include header %>
 
 <div id="content" class="container-fluid">
-  <% if (level=="學生" ) {%>
-  <div class="row">
-    <div class="col pb-2">
-      <div class="card border-light">
-        <div class="card-body fs-2">
-          <% if (configs[0].Value != "" ) {%>
-          【公告】 <%= configs[0].Value %>
-          <% } else { %>
-          【暫無公告】
-          <% } %>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="row">
     <div class="col">
       <div class="card border-light">
         <div class="card-header bg-transparent border-light text-center fs-2">住宿申請</div>
+        <% if (registers[0] == null ) {%>
         <div class="card-body">
-          <p class="card-text fs-2">
-            WIP
-          </p>
-          <a class="button logout fs-2" href="/logout">登出</a>
+          <%= Rules %>
         </div>
+        <div class="card-footer bg-transparent border-light" style="padding: 0;">
+          <form method="post" action="/register">
+            <div class="input-group flex-nowrap" style="margin: -1px; width:unset;">
+              <label class="input-group-text bg-transparent col" style="border-top-left-radius: 0;" for="a">
+                <input class="form-check-input mt-0" type="checkbox" value="" id="a" required>
+                <span style="margin-left: 6px;">我已詳細閱讀住宿申請說明並同意</span>
+
+              </label>
+              <input type="submit" class="btn btn-outline-light form-control col-auto" style="border-top-right-radius: 0; max-width:60px;" value="申請" />
+            </div>
+          </form>
+        </div>
+        <% } else { %>
+        <div class="card-body">
+          <%= registers[0].Approved %>
+          <%= registers[0].Payment %>
+        </div>
+        <% } %>
       </div>
     </div>
     <div class="col">
       <div class="card border-light">
         <div class="card-header bg-transparent border-light text-center fs-2">留言板</div>
-        <div class="card-body container-fluid" style="padding: 0!important; margin-left:12px;">
+        <div class="card-body container-fluid hidescrollbar overflow-scroll d-flex flex-column-reverse" style="padding: 0!important; max-height: 380px;">
           <% for ( var i=0 ; i < comments.length ; i++){ %>
-          <div class="input-group row">
-            <span class="input-group-text col-auto bg-transparent" style="border-radius: 0;" id="addon-wrapping"><%= comments[i].S_ID %></span>
-            <span class="input-group-text col bg-transparent" style="border-radius: 0;" id="addon-wrapping"><%= comments[i].Content %></span>
-            <span class="input-group-text col-auto bg-transparent" style="border-radius: 0;" id="addon-wrapping"><%= new Date(comments[i].When).toLocaleString("zh-TW") %></span>
+          <div class="input-group flex flex-nowrap">
+            <span class="input-group-text col-auto bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= comments[i].S_ID %></span>
+            <span class="input-group-text col bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= comments[i].Content %></span>
+            <span class="input-group-text col-auto bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= new Date(comments[i].When).toLocaleString("zh-TW") %></span>
           </div>
           <% } %>
         </div>
@@ -62,17 +64,11 @@
 
 
 
+  <% if (level=="學生" ) {%>
   <!-- 在這裡弄學生頁面 -->
   <% } else if (level=="舍監" ) { %>
-  <h3>This is Manager page</h3>
   <!-- 在這裡弄舍監頁面 -->
-
   <% } else if (level=="管理員" ) { %>
-  <h3>This is Admin page</h3>
   <!-- 在這裡弄管理員頁面 -->
-  <% } else { %>
-  <!-- 正常來說不會跑來這 -->
-  <h3>Something went wrong!!</h3>
-  <h4>You should have level!</h4>
   <% } %>
 </div>

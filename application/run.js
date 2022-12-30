@@ -162,24 +162,40 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
     res.clearCookie("msg", { httpOnly: true });
 
     comments = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.comments order by `When` DESC limit 100', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
     }).catch(err => { });
-    configs = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
+
+    Announcement = await new Promise((resolve, reject) => {
+        DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Announcement"', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
     }).catch(err => { });
-    if (req.session.level == 2) res.render("home", {
+
+    Rules = await new Promise((resolve, reject) => {
+        DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Rules"', function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+
+    register = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.registers where S_ID = ?;', [req.session.username], function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(err => { });
+    
+    res.render("home", {
         username: req.session.username,
         level: level_names[req.session.level],
-        comments: comments, configs: configs, csrfToken: req.csrfToken(),
+        comments: comments, Announcement: Announcement[0].Value, Rules:Rules[0].Value, csrfToken: req.csrfToken(),
+        registers: register,
         msg: cookie, route: req.baseUrl + req.path
     });
-    else res.render("home", { username: req.session.username, level: level_names[req.session.level], csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path });
 });
 
 app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
