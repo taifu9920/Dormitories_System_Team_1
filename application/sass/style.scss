@@ -10,7 +10,10 @@ $body-bg: #666; // body background color
 $body-color: #fff; // body text color
 $font-size-base: 0.5rem;
 $line-height-base: 1.25;
-
+$nav-tabs-link-active-color: rgb(46, 197, 46);
+$nav-link-color: #fff;
+$link-hover-color: $nav-tabs-link-active-color;
+$nav-pills-link-active-bg: rgba(0, 0, 0, 0);
 // Include any default variable overrides here
 
 @import "../node_modules/bootstrap/scss/variables";
@@ -372,11 +375,9 @@ body {
 }
 
 .button {
-    border-radius: 10%;
+    border-radius: 10px;
     margin: 0 10px 0 0;
     width: auto;
-    line-height: 40px;
-    height: 40px;
     padding: 10px 15px;
     text-decoration: none;
     color: white;
@@ -393,11 +394,24 @@ body {
         background-color: #F78000;
     }
 
+    &.edit {
+        background-color: #F78000;
+    }
+
+    &.save {
+        background-color: #30f08d;
+    }
+
     &:last-child {
         margin-right: 0;
     }
 }
 
+button.button{
+    border:0;
+    display:inline-flex;
+    align-items: center;
+}
 // navbar done
 
 /*

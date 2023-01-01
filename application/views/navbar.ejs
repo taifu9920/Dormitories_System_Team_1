@@ -2,15 +2,29 @@
   <div class="row">
     <div class="col pb-2">
       <div class="card border-light">
-        <div class="card-body row">
-          <div class="col fs-2" style="margin: auto; white-space: normal; overflow-wrap: anywhere;">
-            <% if (Announcement != "" ) {%>
-            【公告】 <%= Announcement %>
-            <% } else { %>
-            【暫無公告】
-            <% } %>
+        <div class="card-body row" style="min-height: 60px; padding-top: 0; padding-bottom: 0;">
+          <div class="col fs-2" id="Announcement" style="margin: auto; white-space: normal; overflow-wrap: anywhere;"><% if (Announcement != "" ) {%><%= Announcement %><% } else { %>【暫無公告】<% } %></div>
+          <% if (level=="舍監" || level=="管理員") { %>
+          <div class="col fs-2" id="edit" style="margin: auto; white-space: normal; overflow-wrap: anywhere; display:none;">
+            <form method="post" action="/anno" id="UpdateAnno">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <div class="input-group">
+                <input type="text" id="anno" name="Announcement" class="form-control fs-2" placeholder="公告" value='<% if (Announcement != "" ) {%><%= Announcement %><% } else { %>【暫無公告】<% } %>'>
+              </div>
+            </form>
           </div>
-          <div class="col-auto">
+          <% } %>
+
+          <div class="col-auto d-inline-flex" style="margin: auto;">
+            <% if (level=="舍監" || level=="管理員") { %>
+            <button id="editBtn" onclick="editAnno()" class="button edit">
+              <i class="material-icons fs-2">edit</i>
+            </button>
+            <button id="saveBtn" onclick="saveAnno()" class="button save" style="display:none">
+              <i class="material-icons fs-2">save</i>
+            </button>
+            <% } %>
+
             <a class="button logout fs-2" href="/logout">登出</a>
 
             <% if ((level == "舍監" || level == "管理員")  && route != "/manage") { %>
@@ -26,3 +40,25 @@
     </div>
   </div>
 </div>
+
+<% if (level=="舍監" || level=="管理員") { %>
+<script>
+  function editAnno() {
+    $("#edit").show();
+    $("#Announcement").hide();
+    $("#editBtn").hide();
+    $("#saveBtn").show();
+  }
+
+  function saveAnno() {
+    if ($("#Announcement").text() == $("#anno")[0].value) {
+      $("#edit").hide();
+      $("#Announcement").show();
+      $("#editBtn").show();
+      $("#saveBtn").hide();
+    } else {
+      $("#UpdateAnno").submit();
+    }
+  }
+</script>
+<% } %>

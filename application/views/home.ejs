@@ -2,11 +2,24 @@
 
 <%- include header %>
 
+<%
+function timestampConvert(date){
+  return new Date(date).toLocaleString('zh-TW').replace(" ", "\n");
+}
+%>
+
 <div id="content" class="container-fluid">
   <div class="row">
     <div class="col">
       <div class="card border-light">
-        <div class="card-header bg-transparent border-light text-center fs-2">住宿申請</div>
+        <div class="card-header bg-transparent border-light text-center fs-2">
+          住宿申請
+          <% if (level=="舍監" || level=="管理員") { %>
+          <button id="editBtn" onclick="editAnno()" class="button edit">
+            <i class="material-icons fs-2">edit</i>
+          </button>
+          <% } %>
+        </div>
         <% if (registers[0] == null ) {%>
         <div class="card-body">
           <%= Rules %>
@@ -34,12 +47,12 @@
     <div class="col">
       <div class="card border-light">
         <div class="card-header bg-transparent border-light text-center fs-2">留言板</div>
-        <div class="card-body container-fluid hidescrollbar overflow-scroll d-flex flex-column-reverse" style="padding: 0!important; max-height: 380px;">
+        <div class="card-body container-fluid hidescrollbar overflow-scroll d-flex flex-column-reverse" style="padding: 0!important; max-height: 380px; margin:-1px; width:unset;">
           <% for ( var i=0 ; i < comments.length ; i++){ %>
-          <div class="input-group flex flex-nowrap">
+          <div class="input-group flex flex-nowrap" style="margin:0 -1px;width:unset;">
             <span class="input-group-text col-auto bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= comments[i].S_ID %></span>
             <span class="input-group-text col bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= comments[i].Content %></span>
-            <span class="input-group-text col-auto bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= new Date(comments[i].When).toLocaleString("zh-TW") %></span>
+            <span class="input-group-text col-auto bg-transparent" style="white-space: break-spaces; overflow-wrap: anywhere;border-radius: 0;" id="addon-wrapping"><%= timestampConvert(comments[i].When) %></span>
           </div>
           <% } %>
         </div>
@@ -47,7 +60,7 @@
           <form action="/comm" method="post" class="row">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="col flex-nowrap">
-              <div class="input-group">
+              <div class="input-group" style="margin: -1px;width: unset;">
                 <button class="btn btn-outline-light fs-2" type="button" id="button-addon2" style="border-top-left-radius: 0;"><%= username %></button>
                 <div class="form-floating">
                   <input name="Content" type="text" class="form-control fs-2" id="comment" placeholder="留言" required>

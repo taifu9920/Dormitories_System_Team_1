@@ -83,6 +83,7 @@ app.use(cookieParser());
 // -- Before Login --
 
 app.get("/signin", csurf({ cookie: true }), function (req, res) {
+    req.session.loc = req.baseUrl + req.path;
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
     res.render("index", { csrfToken: req.csrfToken(), msg: cookie });
@@ -158,6 +159,7 @@ async function auth(req, res, next) {
 
 /*學生瀏覽公告&留言板*/
 app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
+    req.session.loc = req.baseUrl + req.path;
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
 
@@ -166,39 +168,40 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     Announcement = await new Promise((resolve, reject) => {
         DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Announcement"', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     Rules = await new Promise((resolve, reject) => {
         DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Rules"', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     register = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.registers where S_ID = ?;', [req.session.username], function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
-    
+    }).catch(() => { });
+
     res.render("home", {
         username: req.session.username,
         level: level_names[req.session.level],
-        comments: comments, Announcement: Announcement[0].Value, Rules:Rules[0].Value, csrfToken: req.csrfToken(),
+        comments: comments, Announcement: Announcement[0].Value, Rules: Rules[0].Value, csrfToken: req.csrfToken(),
         registers: register,
         msg: cookie, route: req.baseUrl + req.path
     });
 });
 
 app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
+    req.session.loc = req.baseUrl + req.path;
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
     if (req.session.level == 2) res.render("lodge", {
@@ -211,77 +214,71 @@ app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
 
 
 app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
+    req.session.loc = req.baseUrl + req.path;
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
 
     managers = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.managers', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.managers', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     students = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.students', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.students', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
-
-    comments = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.comments', function (err, rows, fields) {
-            if (err) reject(err);
-            resolve(rows);
-        });
-    }).catch(err => { });
-
-    configs = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.configs', function (err, rows, fields) {
-            if (err) reject(err);
-            resolve(rows);
-        });
-    }).catch(err => { });
+    }).catch(() => { });
 
     dormitories = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.dormitories', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.dormitories', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     rooms = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.rooms', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.rooms', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     room_contents = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.room_contents', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.room_contents', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
-
+    }).catch(() => { });
+    
     registers = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.registers', function (err, rows, fields) {
+        DB.query('select * from dormitories_system.registers', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
     }).catch(err => { });
 
+    Announcement = await new Promise((resolve, reject) => {
+        DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Announcement"', function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(() => { });
 
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
         username: req.session.username,
         level: level_names[req.session.level], managers: managers,
-        students: students, comments: comments, configs: configs,
-        dormitories:dormitories,rooms:rooms,room_contents:room_contents,registers:registers,
+        students: students, Announcement: Announcement[0].Value,
+        dormitories: dormitories, rooms: rooms, room_contents: room_contents, registers: registers,
         csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
     });
     else res.redirect("/");
 });
 
 app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/"
     var M_ID = req.body.M_ID;
     var Name = req.body.Name;
     var Email = req.body.Email;
@@ -298,10 +295,11 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
     }).catch(err => {
         res.cookie("msg", "新增失敗！請重試。", { httpOnly: true });
     });
-    res.redirect('/manage');
+    res.redirect(req.session.loc);
 });
 
 app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/"
     res.cookie("msg", "更新公告成功。", { httpOnly: true });
     var anno = req.body.Announcement;
     var sql = 'UPDATE `dormitories_system`.`configs` SET `Value` = ? WHERE (`SC_Tag` = "announcement")';
@@ -310,14 +308,15 @@ app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true 
             if (err) reject(err);
             else { resolve(); }
         });
-    }).catch(err => {
+    }).catch(() => {
         res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
     });
-    res.redirect('/manage');
+    res.redirect(req.session.loc);
 });
 
 app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
     var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`) VALUES (?,?)';
     res.cookie("msg", "新增留言成功。", { httpOnly: true });
     await new Promise((resolve, reject) => {
@@ -329,7 +328,7 @@ app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true 
         console.log(err);
         res.cookie("msg", "新增留言失敗！請重試。", { httpOnly: true });
     });
-    res.redirect('/');
+    res.redirect(req.session.loc);
 });
 
 app.use((req, res) => {
