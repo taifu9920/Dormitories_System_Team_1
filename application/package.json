@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/taifu9920/JS-ServiceTerminal#readme",
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.3.0-alpha1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",

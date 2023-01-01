@@ -12,17 +12,37 @@ function timestampConvert(date){
   <div class="row">
     <div class="col">
       <div class="card border-light">
-        <div class="card-header bg-transparent border-light text-center fs-2">
-          住宿申請
+        <div class="card-header bg-transparent border-light text-center fs-2 d-flex">
+          <div class="col ms-md-auto d-flex align-items-center justify-content-center">住宿申請</div>
           <% if (level=="舍監" || level=="管理員") { %>
-          <button id="editBtn" onclick="editAnno()" class="button edit">
-            <i class="material-icons fs-2">edit</i>
-          </button>
+          <div class="col-auto ms-md-auto">
+            <button id="editRulesBtn" onclick="editRules()" class="button edit" style="margin:0;">
+              <i class="material-icons fs-2">edit</i>
+            </button>
+            <button id="saveRulesBtn" onclick="saveRules()" class="button save" style="display:none">
+              <i class="material-icons fs-2">save</i>
+            </button>
+          </div>
           <% } %>
         </div>
         <% if (registers[0] == null ) {%>
         <div class="card-body">
-          <%= Rules %>
+          <div id="RulesArea">
+            <%= Rules %>
+          </div>
+          <div id="editorArea" style="display:none;">
+            <div id="editor">
+              <p><%= Rules %></p>
+            </div>
+            <script>
+              ClassicEditor
+                .create(document.querySelector('#editor'))
+                .catch(error => {
+                  console.error(error);
+                });
+                $("#editor").hide();
+            </script>
+          </div>
         </div>
         <div class="card-footer bg-transparent border-light" style="padding: 0;">
           <form method="post" action="/register">
@@ -74,14 +94,24 @@ function timestampConvert(date){
       </div>
     </div>
   </div>
-
-
-
-  <% if (level=="學生" ) {%>
-  <!-- 在這裡弄學生頁面 -->
-  <% } else if (level=="舍監" ) { %>
-  <!-- 在這裡弄舍監頁面 -->
-  <% } else if (level=="管理員" ) { %>
-  <!-- 在這裡弄管理員頁面 -->
-  <% } %>
 </div>
+
+<script>
+  function editRules() {
+    $("#editorArea").show();
+    $("#RulesArea").hide();
+    $("#editRulesBtn").hide();
+    $("#saveRulesBtn").show();
+  }
+
+  function saveRules() {
+    if ($("#Announcement").text() == $("#anno")[0].value) {
+      $("#editorArea").hide();
+      $("#RulesArea").show();
+      $("#editRulesBtn").show();
+      $("#saveRulesBtn").hide();
+    } else {
+      $("#UpdateAnno").submit();
+    }
+  }
+</script>
