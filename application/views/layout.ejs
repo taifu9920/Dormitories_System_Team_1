@@ -36,19 +36,15 @@
     <%- body %> 
 	
     <script>
-        $(window).on(' load', function() { $('.loading').hide(); }); </script>
+      $(window).on('load', function() {
+        $('.loading').fadeOut("slow");
+      });
 
-
-          <script>
-            $(window).on('load', function() {
-              $('.loading').hide();
-            });
-
-            if (<%= Boolean(msg) %>) {
-              $("#alert").fadeIn("slow");
-              $("#alert button").focus();
-            }
-          </script>
+      if (<%= Boolean(msg) %>) {
+        $("#alert").fadeIn("slow");
+        $("#alert button").focus();
+      }
+    </script>
 </body>
 
 </html>

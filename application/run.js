@@ -200,19 +200,6 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
     });
 });
 
-app.get("/lodge", csurf({ cookie: true }), auth, async function (req, res) {
-    req.session.loc = req.baseUrl + req.path;
-    let cookie = req.cookies["msg"];
-    res.clearCookie("msg", { httpOnly: true });
-    if (req.session.level == 2) res.render("lodge", {
-        username: req.session.username, level: level_names[req.session.level],
-        csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
-    });
-    else res.redirect("/");
-});
-
-
-
 app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     req.session.loc = req.baseUrl + req.path;
     let cookie = req.cookies["msg"];
@@ -252,7 +239,7 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             resolve(rows);
         });
     }).catch(() => { });
-    
+
     registers = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.registers', function (err, rows) {
             if (err) reject(err);
@@ -288,7 +275,7 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
 
     res.cookie("msg", "新增成功。", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [M_ID, Name, Email, Phone, Password], function (err, data) {
+        DB.query(sql, [M_ID, Name, Email, Phone, Password], function (err) {
             if (err) reject(err);
             else { resolve(); }
         });
@@ -301,10 +288,9 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
 app.post("/anno", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.loc == undefined) req.session.loc = "/"
     res.cookie("msg", "更新公告成功。", { httpOnly: true });
-    var anno = req.body.Announcement;
     var sql = 'UPDATE `dormitories_system`.`configs` SET `Value` = ? WHERE (`SC_Tag` = "announcement")';
     await new Promise((resolve, reject) => {
-        DB.query(sql, [anno], function (err, data) {
+        DB.query(sql, [req.body.Announcement], function (err, data) {
             if (err) reject(err);
             else { resolve(); }
         });
@@ -320,7 +306,7 @@ app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true 
     var sql = 'INSERT INTO dormitories_system.comments (`S_ID`, `Content`) VALUES (?,?)';
     res.cookie("msg", "新增留言成功。", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [req.session.username, req.body.Content], function (err, data) {
+        DB.query(sql, [req.session.username, req.body.Content], function (err) {
             if (err) { reject(err); console.log(err); }
             else { resolve(); }
         });
@@ -328,6 +314,76 @@ app.post("/comm", express.urlencoded({ extended: false }), csurf({ cookie: true 
         console.log(err);
         res.cookie("msg", "新增留言失敗！請重試。", { httpOnly: true });
     });
+    res.redirect(req.session.loc);
+});
+
+app.post("/rules", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
+    var sql = 'UPDATE `dormitories_system`.`configs` SET `Value` = ? WHERE (`SC_Tag` = "Rules")';
+    res.cookie("msg", "更新住宿須知成功。", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.rules], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch(() => {
+        res.cookie("msg", "更新失敗！請重試。", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/register", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
+    var sql = 'INSERT INTO dormitories_system.registers (`S_ID`, `Year`, `Term`, `Approved`, `Payment`) VALUES (?,?,?,?,?)';
+    res.cookie("msg", "住宿申請成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.session.username, 111, 1, 0, 0], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "申請失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/pay", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
+    var sql = 'UPDATE `dormitories_system`.`registers` SET `Approved` = 1 WHERE (`S_ID` = ?)';
+    res.cookie("msg", "付款成功", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.session.username], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "付款失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+
+app.post("/delete", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
+    if (req.body.commentID) {
+        var sql = "DELETE FROM `dormitories_system`.`comments` WHERE (`C_ID` = ?);";
+        res.cookie("msg", "刪除成功", { httpOnly: true });
+        await new Promise((resolve, reject) => {
+            DB.query(sql, [req.body.commentID], function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.cookie("msg", "刪除失敗，請重試", { httpOnly: true });
+        });
+    }
     res.redirect(req.session.loc);
 });
 
