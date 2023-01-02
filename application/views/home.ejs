@@ -92,9 +92,9 @@ function timestampConvert(date){
       </div>
     </div>
     <div class="col" style="height:inherit">
-      <div class="card border-light" style="height:inherit">
+      <div id="comments" class="card border-light" style="height:inherit">
         <div class="card-header bg-transparent border-light text-center fs-2">學生留言板</div>
-        <div id="comments" class="card-body container-fluid hidescrollbar overflow-scroll d-flex flex-column-reverse">
+        <div class="card-body container-fluid hidescrollbar overflow-scroll d-flex flex-column-reverse commentList">
           <% for ( var i=0 ; i < comments.length ; i++){ %>
           <div class="input-group flex flex-nowrap">
             <span class="input-group-text col-auto bg-transparent"><%= comments[i].S_ID %></span>

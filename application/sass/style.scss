@@ -501,25 +501,44 @@ p {
     padding: 10px 15px;
     text-decoration: none;
     color: white;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
 
     &.logout {
         background-color: #DE3E35;
+        &:hover{
+            background-color: #b72d26;
+        }
     }
 
     &.lodge {
         background-color: #1B9A59;
+        &:hover{
+            background-color: #136239;
+        }
     }
 
     &.manage {
         background-color: #F78000;
+        &:hover{
+            background-color: #9a560d;
+        }
     }
 
     &.edit {
         background-color: #F78000;
+        &:hover{
+            background-color: #9a560d;
+        }
     }
 
     &.save {
         background-color: #30f08d;
+        &:hover{
+            background-color: #1ea760;
+        }
     }
 
     &:last-child {
@@ -673,33 +692,43 @@ button.button {
 */
 
 #comments {
-    padding: 0 !important;
-    margin: -1px;
-    width: unset;
-
-    >div {
-        margin: 0 -1px;
+    >.commentList {
+        padding: 0 !important;
+        margin: -1px;
         width: unset;
 
-        >span {
-            white-space: break-spaces;
-            overflow-wrap: anywhere;
-        }
+        >div {
+            margin: 0 -1px;
+            width: unset;
 
-        >* {
-            border-radius: 0;
-        }
+            >span {
+                white-space: break-spaces;
+                overflow-wrap: anywhere;
+            }
 
-        &:first-child {
             >* {
-                &:first-child {
-                    border-bottom-left-radius: 10px;
-                }
+                border-radius: 0;
+            }
 
-                &:last-child {
-                    border-bottom-right-radius: 10px;
+        }
+    }
+
+    >:last-child {
+        &.commentList {
+            >div {
+                &:first-child {
+                    >* {
+                        &:first-child {
+                            border-bottom-left-radius: 10px;
+                        }
+
+                        &:last-child {
+                            border-bottom-right-radius: 10px;
+                        }
+                    }
                 }
             }
+
         }
     }
 }

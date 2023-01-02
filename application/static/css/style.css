@@ -11977,21 +11977,40 @@ p {
   padding: 10px 15px;
   text-decoration: none;
   color: white;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 .button.logout {
   background-color: #DE3E35;
 }
+.button.logout:hover {
+  background-color: #b72d26;
+}
 .button.lodge {
   background-color: #1B9A59;
+}
+.button.lodge:hover {
+  background-color: #136239;
 }
 .button.manage {
   background-color: #F78000;
 }
+.button.manage:hover {
+  background-color: #9a560d;
+}
 .button.edit {
   background-color: #F78000;
 }
+.button.edit:hover {
+  background-color: #9a560d;
+}
 .button.save {
   background-color: #30f08d;
+}
+.button.save:hover {
+  background-color: #1ea760;
 }
 .button:last-child {
   margin-right: 0;
@@ -12114,26 +12133,26 @@ button.button {
 /*
     Home
 */
-#comments {
+#comments > .commentList {
   padding: 0 !important;
   margin: -1px;
   width: unset;
 }
-#comments > div {
+#comments > .commentList > div {
   margin: 0 -1px;
   width: unset;
 }
-#comments > div > span {
+#comments > .commentList > div > span {
   white-space: break-spaces;
   overflow-wrap: anywhere;
 }
-#comments > div > * {
+#comments > .commentList > div > * {
   border-radius: 0;
 }
-#comments > div:first-child > *:first-child {
+#comments > :last-child.commentList > div:first-child > *:first-child {
   border-bottom-left-radius: 10px;
 }
-#comments > div:first-child > *:last-child {
+#comments > :last-child.commentList > div:first-child > *:last-child {
   border-bottom-right-radius: 10px;
 }
 
