@@ -116,33 +116,42 @@ async function auth(req, res, next) {
         })
         //Manager Account Check
         Manager = await new Promise((resolve, reject) => {
-            DB.query("SELECT M_ID, Password FROM dormitories_system.managers;", function (err, rows) {
+            DB.query("SELECT M_ID, Name, Password FROM dormitories_system.managers;", function (err, rows) {
                 if (err) reject(process.env["DB_connect_failed"])
                 else {
-                    datas = new Map(rows.map(o => [o.M_ID, o.Password]));
+                    datas = new Map(rows.map(o => [o.M_ID, [o.Password, o.Name]]));
                     resolve(datas)
                 }
             })
         })
         //Student Account Check
         Student = await new Promise((resolve, reject) => {
-            DB.query("SELECT S_ID, Password FROM dormitories_system.students;", function (err, rows) {
+            DB.query("SELECT S_ID, Name, Password FROM dormitories_system.students;", function (err, rows) {
                 if (err) reject(process.env["DB_connect_failed"])
                 else {
-                    datas = new Map(rows.map(o => [o.S_ID, o.Password]));
+                    datas = new Map(rows.map(o => [o.S_ID, [o.Password, o.Name]]));
                     resolve(datas)
                 }
             })
         })
         if ((req.session.username == System.get("owner_account")
             && req.session.password == System.get("owner_password"))
-            || (Manager.get(req.session.username) == req.session.password
+            || (Manager.get(req.session.username) && Manager.get(req.session.username)[0] == req.session.password
                 && req.session.password != null)
-            || (Student.get(req.session.username) == req.session.password
+            || (Student.get(req.session.username) && Student.get(req.session.username)[0] == req.session.password
                 && req.session.password != null)) {
-            if (req.session.username == System.get("owner_account")) req.session.level = 0
-            else if (Manager.get(req.session.username)) req.session.level = 1
-            else if (Student.get(req.session.username)) req.session.level = 2
+            if (req.session.username == System.get("owner_account")) {
+                req.session.level = 0;
+                req.session.name = "總務處";
+            }
+            else if (Manager.get(req.session.username)) {
+                req.session.level = 1;
+                req.session.name = Manager.get(req.session.username)[1];
+            }
+            else if (Student.get(req.session.username)) {
+                req.session.level = 2;
+                req.session.name = Student.get(req.session.username)[1];
+            }
             next()
         }
         else {
@@ -192,7 +201,7 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
     }).catch(() => { });
 
     res.render("home", {
-        username: req.session.username,
+        username: req.session.username, name: req.session.name,
         level: level_names[req.session.level],
         comments: comments, Announcement: Announcement[0].Value, Rules: Rules[0].Value, csrfToken: req.csrfToken(),
         registers: register,
@@ -255,7 +264,7 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     }).catch(() => { });
 
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
-        username: req.session.username,
+        username: req.session.username, name: req.session.name,
         level: level_names[req.session.level], managers: managers,
         students: students, Announcement: Announcement[0].Value,
         dormitories: dormitories, rooms: rooms, room_contents: room_contents, registers: registers,
@@ -280,6 +289,7 @@ app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: tru
             else { resolve(); }
         });
     }).catch(err => {
+        console.log(err);
         res.cookie("msg", "新增失敗！請重試。", { httpOnly: true });
     });
     res.redirect(req.session.loc);
@@ -367,6 +377,22 @@ app.post("/pay", express.urlencoded({ extended: false }), csurf({ cookie: true }
     res.redirect(req.session.loc);
 });
 
+app.post("/ManagerUpdate", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    // prints date in YYYY-MM-DD format
+    if (req.session.loc == undefined) req.session.loc = "/"
+    var sql = 'UPDATE `dormitories_system`.`managers` SET `M_ID` = ?, `Name` = ?, `Email` = ?, `Phone` = ?, `Password` = ? WHERE (`M_ID` = ?)';
+    res.cookie("msg", "更新成功", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.M_ID, req.body.Name, req.body.Email, req.body.Phone, req.body.Password, req.body.M_ID], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "更新失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
 
 app.post("/delete", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     // prints date in YYYY-MM-DD format
@@ -376,6 +402,17 @@ app.post("/delete", express.urlencoded({ extended: false }), csurf({ cookie: tru
         res.cookie("msg", "刪除成功", { httpOnly: true });
         await new Promise((resolve, reject) => {
             DB.query(sql, [req.body.commentID], function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            res.cookie("msg", "刪除失敗，請重試", { httpOnly: true });
+        });
+    } else if (req.body.M_ID) {
+        var sql = "DELETE FROM `dormitories_system`.`managers` WHERE (`M_ID` = ?);";
+        res.cookie("msg", "刪除成功", { httpOnly: true });
+        await new Promise((resolve, reject) => {
+            DB.query(sql, [req.body.M_ID], function (err) {
                 if (err) reject(err);
                 else { resolve(); }
             });

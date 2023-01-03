@@ -10,9 +10,11 @@
           <li class="nav-item" role="presentation">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dormitories" type="button" aria-selected="true">宿舍管理</button>
           </li>
+          <% if (level=="管理員") { %>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#managers" type="button">管理員管理</button>
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#managers" type="button">舍監管理</button>
           </li>
+          <% } %>
           <li class="nav-item" role="presentation">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#students" type="button">學生列表管理</button>
           </li>
@@ -90,64 +92,82 @@
               <% } %>
             </table>
           </div>
+          <% if (level=="管理員") { %>
           <div class="tab-pane fade" id="managers">
-            <form name="add_manager" action="add_manager" method="post">
+
+            <form method="post" id="updateManager" action="/ManagerUpdate" style="display:none" class="input-group">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <div>
-                <label for="M_ID">Enter your M_ID: </label>
-                <input type="text" name="M_ID" id="M_ID" placeholder="M_ID" required>
-              </div>
-              <div>
-                <label for="Name">Enter your Name: </label>
-                <input type="text" name="Name" id="Name" placeholder="Name" required>
-              </div>
-              <div>
-                <label for="Email">Enter your Email: </label>
-                <input type="email" name="Email" id="Email" placeholder="Email" required>
-              </div>
-              <div>
-                <label for="Phone">Enter your Phone: </label>
-                <input type="text" name="Phone" id="Phone" placeholder="Phone" required>
-              </div>
-              <div>
-                <label for="Password">Enter your Password: </label>
-                <input type="text" name="Password" id="Password" placeholder="Password" required>
-              </div>
-              <div>
-                <input type="submit" name="submit" value="add">
-                <input type="reset" value="Reset">
-              </div>
+              <input name="M_ID" type="hidden" class="form-control fs-2" value="" style="border-top-left-radius: 0" />
+              <input name="Name" type="hidden" class="form-control fs-2" value="" />
+              <input name="Email" type="hidden" class="form-control fs-2" value="" />
+              <input name="Phone" type="hidden" class="form-control fs-2" value="" />
+              <input name="Password" type="hidden" class="form-control fs-2" value="" />
             </form>
 
-            <table>
-              <tr>
-                <th>M_ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Password</th>
-              </tr>
-              <% for ( var i=0 ; i < managers.length ; i++){ %>
-              <tr>
-                <td>
-                  <%= managers[i].M_ID %>
-                </td>
-                <td>
-                  <%= managers[i].Name %>
-                </td>
-                <td>
-                  <%= managers[i].Email %>
-                </td>
-                <td>
-                  <%= managers[i].Phone %>
-                </td>
-                <td>
-                  <%= managers[i].Password %>
-                </td>
-              </tr>
-              <% } %>
+            <% for ( var i=0 ; i < managers.length ; i++){ %>
+            <form method="post" id="delManager<%= managers[i].M_ID %>" action="/delete" style="display:none">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="M_ID" value="<%= managers[i].M_ID %>">
+            </form>
+            <% } %>
+            <table class="table mb-0">
+              <thead>
+                <th>舍監編號</th>
+                <th>舍監名稱</th>
+                <th>信箱</th>
+                <th>手機號碼</th>
+                <th>密碼</th>
+                <th style="text-align: right">功能</th>
+              </thead>
+              <tbody class="align-middle">
+                <% for ( var i=0 ; i < managers.length ; i++){ %>
+                <tr id="ManagerEdit<%= managers[i].M_ID %>" style="display:none;">
+                  <td><input name="M_ID" type="text" class="form-control fs-2" value="<%= managers[i].M_ID %>" placeholder="舍監編號" style="border-top-left-radius: 0" required /></td>
+                  <td><input name="Name" type="text" class="form-control fs-2" value="<%= managers[i].Name %>" placeholder="舍監名稱" required /></td>
+                  <td><input name="Email" type="text" class="form-control fs-2" value="<%= managers[i].Email %>" placeholder="信箱" required /></td>
+                  <td><input name="Phone" type="text" class="form-control fs-2" value="<%= managers[i].Phone %>" placeholder="手機號碼" required /></td>
+                  <td><input name="Password" type="text" class="form-control fs-2" value="<%= managers[i].Password %>" placeholder="密碼" required /></td>
+
+                  <td style="text-align: right">
+                    <button id="saveRulesBtn" onclick="saveManager('<%= managers[i].M_ID %>')" class="button save">
+                      <i class="material-icons fs-2">save</i>
+                    </button>
+                    <button class="button logout" onclick="$('#delManager<%= managers[i].M_ID %>').submit()">
+                      <i class="material-icons fs-2">delete</i>
+                    </button>
+                  </td>
+                </tr>
+                <tr id="ManagerRecord<%= managers[i].M_ID %>">
+                  <td><%= managers[i].M_ID %></td>
+                  <td><%= managers[i].Name %></td>
+                  <td><%= managers[i].Email %></td>
+                  <td><%= managers[i].Phone %></td>
+                  <td><%= managers[i].Password %></td>
+                  <td style="text-align: right">
+                    <button id="editRulesBtn" onclick="editManager('<%= managers[i].M_ID %>')" class="button edit" style="margin:0;">
+                      <i class="material-icons fs-2">edit</i>
+                    </button>
+                    <button class="button logout" onclick="$('#delManager<%= managers[i].M_ID %>').submit()" style="margin-left: 10px;">
+                      <i class="material-icons fs-2">delete</i>
+                    </button>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
             </table>
+            <form class="input-group" onsubmit="addManagerValidate()" style="margin: -1px -1px -1px 0; width:unset;" action="/manage" method="post" id="addManager">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input name="M_ID" maxlength="10" type="text" class="form-control fs-2" placeholder="舍監編號" style="border-top-left-radius: 0" required />
+              <input name="Name" maxlength="10" type="text" class="form-control fs-2" placeholder="舍監名稱" required />
+              <input name="Email" maxlength="100" type="text" class="form-control fs-2" placeholder="信箱" required />
+              <input name="Phone" maxlength="20" type="text" class="form-control fs-2" placeholder="手機號碼" required />
+              <input name="Password" maxlength="50" type="text" class="form-control fs-2" placeholder="密碼" required />
+              <button id="saveRulesBtn" onclick="addManagerValidate()" class="button save" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">
+                <i class="material-icons fs-2">add</i>
+              </button>
+            </form>
           </div>
+          <% } %>
           <div class="tab-pane fade" id="students">
             <table>
               <tr>
@@ -238,3 +258,47 @@
     </div>
   </div>
 </div>
+
+<script>
+  function editManager(M_ID) {
+    $("#ManagerEdit" + M_ID).show();
+    $("#ManagerRecord" + M_ID).hide();
+  }
+
+  function vaildateManagerEdit(M_ID) {
+    checker = true;
+    for (i = 0; i < 5; i++) {
+      tmp = $("#ManagerEdit" + M_ID + " td input")[i].value.trim();
+      if (tmp == "") return true;
+      if (tmp != $("#ManagerRecord" + M_ID + " td")[i].innerText.trim()) {
+        checker = false;
+      }
+    }
+    return checker;
+  }
+
+  function saveManager(M_ID) {
+    if (vaildateManagerEdit(M_ID)) {
+      $("#ManagerEdit" + M_ID).hide();
+      $("#ManagerRecord" + M_ID).show();
+      for (i = 0; i < 5; i++) {
+        $("#ManagerEdit" + M_ID + " td input")[i].value = $("#ManagerRecord" + M_ID + " td")[i].innerText;
+      }
+    } else {
+      for (i = 0; i < 5; i++) {
+        $("#updateManager input")[i + 1].value = $("#ManagerEdit" + M_ID + " td input")[i].value;
+      }
+      $("#updateManager").submit();
+    }
+  }
+
+  function addManagerValidate() {
+    for (i = 1; i <= 5; i++) {
+      if ($("#addManager input")[i].value.trim() == "") {
+        event.preventDefault();
+        return false;
+      }
+    }
+    return true;
+  }
+</script>

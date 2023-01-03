@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `dormitories_system` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `dormitories_system`;
 -- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dormitories_system
@@ -119,7 +117,7 @@ CREATE TABLE `managers` (
 
 LOCK TABLES `managers` WRITE;
 /*!40000 ALTER TABLE `managers` DISABLE KEYS */;
-INSERT INTO `managers` VALUES ('M1234567','黃舍監','test@mail.nuk.edu.tw','0902345678','aaa123');
+INSERT INTO `managers` VALUES ('M1234567','黃舍監','test@mail.nuk.edu.tw','0902345678','aaa123'),('U1234567','林敬寶','taifu9920923@gmail.com','0908850282','a123');
 /*!40000 ALTER TABLE `managers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +168,7 @@ CREATE TABLE `registers` (
   PRIMARY KEY (`Reg_ID`),
   KEY `S_ID_idx` (`S_ID`),
   CONSTRAINT `S_ID2` FOREIGN KEY (`S_ID`) REFERENCES `students` (`S_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,4 +307,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-02 23:08:07
+-- Dump completed on 2023-01-04  0:39:32
