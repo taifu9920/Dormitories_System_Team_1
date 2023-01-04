@@ -7,90 +7,89 @@
     <div class="col">
       <div class="card border-light">
         <ul class="nav nav-pills nav-fill" id="myTab" role="tablist" style="border-bottom: 1px solid white;">
-          <li class="nav-item" role="presentation">
+          <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dormitories" type="button" aria-selected="true">宿舍管理</button>
           </li>
           <% if (level=="管理員") { %>
-          <li class="nav-item" role="presentation">
+          <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#managers" type="button">舍監管理</button>
           </li>
           <% } %>
-          <li class="nav-item" role="presentation">
+          <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#students" type="button">學生列表管理</button>
           </li>
-          <li class="nav-item" role="presentation">
+          <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#registers" type="button">宿舍申請管理</button>
           </li>
         </ul>
-        <div class="tab-content" id="myTabContent">
+        <div class="tab-content">
           <div class="tab-pane fade show active" id="dormitories">
-            <table>
-              <tr>
-                <th>D_ID</th>
-                <th>Name</th>
-              </tr>
+            <nav style="border-bottom: 1px solid white;">
+              <div class="nav nav-pills flex-column flex-sm-row">
+                <% for ( var i=0 ; i < dormitories.length ; i++){ %>
+                <button class='flex-sm-fill text-sm-center nav-link <%= i == 0 ? "active" : "" %>' id="dorm<%= dormitories[i].D_ID %>" type="button" data-bs-toggle="tab" data-bs-target="#dormList<%= dormitories[i].D_ID %>"><%= dormitories[i].Name %></button>
+                <% } %>
+              </div>
+            </nav>
+            <div class="tab-content">
               <% for ( var i=0 ; i < dormitories.length ; i++){ %>
-              <tr>
-                <td>
-                  <%= dormitories[i].D_ID %>
-                </td>
-                <td>
-                  <%= dormitories[i].Name %>
-                </td>
-              </tr>
-              <% } %>
-            </table>
+              <div class='tab-pane fade <%= i == 0 ? "show active" : "" %>' id="dormList<%= dormitories[i].D_ID %>" tabindex="<%= dormitories[i].D_ID %>">
+                <div class="accordion accordion-flush">
+                  <% for ( var o=0 ; o < rooms.get(dormitories[i].D_ID).length ; o++){ %>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#room<%= rooms.get(dormitories[i].D_ID)[o][3] %>"><%= rooms.get(dormitories[i].D_ID)[o][0] %> 號房</button>
+                    </h2>
+                    <div id="room<%= rooms.get(dormitories[i].D_ID)[o][3] %>" class='accordion-collapse collapse'>
+                      <div class="accordion-body p-0">
+                        <div class="input-group" style="margin: -1px; width: unset;">
+                          <select class="form-select fs-2" id="inputGroupSelect01" style="border-radius:0;">
+                            <% for ( var k=0 ; k < dormitories.length ; k++){ %>
+                            <option class="fs-2" value="<%= dormitories[k].D_ID %>" <%= dormitories[k].D_ID == dormitories[i].D_ID  ? "selected" : "" %>><%= dormitories[k].Name %></option>
+                            <% } %>
+                          </select>
 
-            <table>
-              <tr>
-                <th>R_ID</th>
-                <th>D_ID</th>
-                <th>Peoples</th>
-                <th>Costs</th>
-              </tr>
-              <% for ( var i=0 ; i < rooms.length ; i++){ %>
-              <tr>
-                <td>
-                  <%= rooms[i].R_ID %>
-                </td>
-                <td>
-                  <%= rooms[i].D_ID %>
-                </td>
-                <td>
-                  <%= rooms[i].Peoples %>
-                </td>
-                <td>
-                  <%= rooms[i].Costs %>
-                </td>
-              </tr>
+                          <span class="input-group-text fs-2 bg-transparent">房號</span>
+                          <input class="form-control text-center fs-2" value="<%= rooms.get(dormitories[i].D_ID)[o][0] %>" />
+                          <span class="input-group-text fs-2 bg-transparent" style="border-radius:0;">可容納人數</span>
+                          <input class="form-control text-center fs-2" value="<%= rooms.get(dormitories[i].D_ID)[o][1] %>" />
+                          <span class="input-group-text fs-2 bg-transparent">價格</span>
+                          <input class="form-control text-center fs-2" style="border-radius:0;" value="<%= rooms.get(dormitories[i].D_ID)[o][2] %>" />
+                        </div>
+                        <table class="table">
+                          <thead>
+                            <th>RC_ID</th>
+                            <th>R_ID</th>
+                            <th>Name</th>
+                            <th>Amount</th>
+                          </thead>
+                          <tbody>
+                            <% for ( var k=0 ; k < room_contents.length ; k++){ %>
+                            <tr>
+                              <td>
+                                <%= room_contents[k].RC_ID %>
+                              </td>
+                              <td>
+                                <%= room_contents[k].R_ID %>
+                              </td>
+                              <td>
+                                <%= room_contents[k].Name %>
+                              </td>
+                              <td>
+                                <%= room_contents[k].Amount %>
+                              </td>
+                            </tr>
+                            <% } %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
               <% } %>
-            </table>
-
-
-            <table>
-              <tr>
-                <th>RC_ID</th>
-                <th>R_ID</th>
-                <th>Name</th>
-                <th>Amount</th>
-              </tr>
-              <% for ( var i=0 ; i < room_contents.length ; i++){ %>
-              <tr>
-                <td>
-                  <%= room_contents[i].RC_ID %>
-                </td>
-                <td>
-                  <%= room_contents[i].R_ID %>
-                </td>
-                <td>
-                  <%= room_contents[i].Name %>
-                </td>
-                <td>
-                  <%= room_contents[i].Amount %>
-                </td>
-              </tr>
-              <% } %>
-            </table>
+            </div>
           </div>
           <% if (level=="管理員") { %>
           <div class="tab-pane fade" id="managers">
@@ -102,6 +101,7 @@
               <input name="Email" type="hidden" class="form-control fs-2" value="" />
               <input name="Phone" type="hidden" class="form-control fs-2" value="" />
               <input name="Password" type="hidden" class="form-control fs-2" value="" />
+              <input name="OriginalM_ID" type="hidden" class="form-control fs-2" value="" />
             </form>
 
             <% for ( var i=0 ; i < managers.length ; i++){ %>
@@ -288,6 +288,7 @@
       for (i = 0; i < 5; i++) {
         $("#updateManager input")[i + 1].value = $("#ManagerEdit" + M_ID + " td input")[i].value;
       }
+      $("#updateManager input")[6].value = $("#ManagerRecord" + M_ID + " td")[0].innerText;
       $("#updateManager").submit();
     }
   }

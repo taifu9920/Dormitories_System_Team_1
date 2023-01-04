@@ -238,7 +238,12 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     rooms = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.rooms', function (err, rows) {
             if (err) reject(err);
-            resolve(rows);
+            datas = new Map();
+            for (i = 0; i < rows.length; i++) {
+                if (datas.has(rows[i].D_ID)) datas.get(rows[i].D_ID).push([rows[i].R_ID, rows[i].Peoples, rows[i].Costs, rows[i].ID]);
+                else datas.set(rows[i].D_ID, [[rows[i].R_ID, rows[i].Peoples, rows[i].Costs, rows[i].ID]]);
+            }
+            resolve(datas);
         });
     }).catch(() => { });
 
@@ -383,7 +388,7 @@ app.post("/ManagerUpdate", express.urlencoded({ extended: false }), csurf({ cook
     var sql = 'UPDATE `dormitories_system`.`managers` SET `M_ID` = ?, `Name` = ?, `Email` = ?, `Phone` = ?, `Password` = ? WHERE (`M_ID` = ?)';
     res.cookie("msg", "更新成功", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [req.body.M_ID, req.body.Name, req.body.Email, req.body.Phone, req.body.Password, req.body.M_ID], function (err) {
+        DB.query(sql, [req.body.OriginalM_ID, req.body.Name, req.body.Email, req.body.Phone, req.body.Password, req.body.M_ID], function (err) {
             if (err) reject(err);
             else { resolve(); }
         });
