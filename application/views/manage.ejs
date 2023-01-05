@@ -8,84 +8,169 @@
       <div class="card border-light">
         <ul class="nav nav-pills nav-fill" id="myTab" role="tablist" style="border-bottom: 1px solid white;">
           <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dormitories" type="button" aria-selected="true">宿舍管理</button>
+            <button class="nav-link active fs-2" data-bs-toggle="tab" data-bs-target="#dormitories" type="button" aria-selected="true">宿舍管理</button>
           </li>
           <% if (level=="管理員") { %>
           <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#managers" type="button">舍監管理</button>
+            <button class="nav-link fs-2" data-bs-toggle="tab" data-bs-target="#managers" type="button">舍監管理</button>
           </li>
           <% } %>
           <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#students" type="button">學生列表管理</button>
+            <button class="nav-link fs-2" data-bs-toggle="tab" data-bs-target="#students" type="button">學生列表管理</button>
           </li>
           <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#registers" type="button">宿舍申請管理</button>
+            <button class="nav-link fs-2" data-bs-toggle="tab" data-bs-target="#registers" type="button">宿舍申請管理</button>
           </li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade show active" id="dormitories">
+            <form class="input-group" method="post" action="/newDorm" id="newDorm">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input name="Name" value="" class="form-control fs-2" style="margin-top:-1px;" placeholder="宿舍名稱"/>
+              <button onclick="$('#newDorm').submit();" class="button lodge fs-2" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">新增宿舍</button>
+            </form>
+
+            <div class="input-group text-center" style="margin: -1px; width: unset; ">
+              <span class="form-control fs-2" style="border-radius:0; background-color: #555;">宿舍列表</span>
+            </div>
             <nav style="border-bottom: 1px solid white;">
               <div class="nav nav-pills flex-column flex-sm-row">
                 <% for ( var i=0 ; i < dormitories.length ; i++){ %>
-                <button class='flex-sm-fill text-sm-center nav-link <%= i == 0 ? "active" : "" %>' id="dorm<%= dormitories[i].D_ID %>" type="button" data-bs-toggle="tab" data-bs-target="#dormList<%= dormitories[i].D_ID %>"><%= dormitories[i].Name %></button>
+                <button class='flex-sm-fill text-sm-center nav-link fs-2 <%= i == 0 ? "active" : "" %>' id="dorm<%= dormitories[i].D_ID %>" type="button" data-bs-toggle="tab" data-bs-target="#dormList<%= dormitories[i].D_ID %>"><%= dormitories[i].Name %></button>
                 <% } %>
               </div>
             </nav>
             <div class="tab-content">
               <% for ( var i=0 ; i < dormitories.length ; i++){ %>
-              <div class='tab-pane fade <%= i == 0 ? "show active" : "" %>' id="dormList<%= dormitories[i].D_ID %>" tabindex="<%= dormitories[i].D_ID %>">
-                <div class="accordion accordion-flush">
-                  <% for ( var o=0 ; o < rooms.get(dormitories[i].D_ID).length ; o++){ %>
+              <% DormData = dormitories[i] %>
+              <div class='tab-pane fade <%= i == 0 ? "show active" : "" %>' id="dormList<%= DormData.D_ID %>" tabindex="<%= DormData[0] %>">
+                <div class="accordion accordion-flush" id="dormAccrodion<%= DormData.D_ID %>">
+                  <% if (rooms.get(DormData.D_ID) != undefined) { %>
+                  <% for ( var o=0 ; o < rooms.get(DormData.D_ID).length ; o++){ %>
+                  <% RoomData = rooms.get(DormData.D_ID)[o] %>
                   <div class="accordion-item">
                     <h2 class="accordion-header">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#room<%= rooms.get(dormitories[i].D_ID)[o][3] %>"><%= rooms.get(dormitories[i].D_ID)[o][0] %> 號房</button>
+                      <button id="roomAccrodionBtn<%= DormData.D_ID + "_" + RoomData[0] %>" class="accordion-button collapsed text-center fs-2" data-bs-parent="#dormAccrodion<%= DormData.D_ID %>" style="display:block;" type="button" data-bs-toggle="collapse" data-bs-target="#room<%= DormData.D_ID + "_" + RoomData[0] %>"><%= RoomData[0] %> 號房</button>
                     </h2>
-                    <div id="room<%= rooms.get(dormitories[i].D_ID)[o][3] %>" class='accordion-collapse collapse'>
+                    <div id="room<%= DormData.D_ID + "_" + RoomData[0] %>" class='accordion-collapse collapse' aria-labelledby="#roomAccrodionBtn<%= DormData.D_ID + "_" + RoomData[0] %>" data-bs-parent="#dormAccrodion<%= DormData.D_ID %>">
                       <div class="accordion-body p-0">
-                        <div class="input-group" style="margin: -1px; width: unset;">
-                          <select class="form-select fs-2" id="inputGroupSelect01" style="border-radius:0;">
+                        <div class="input-group text-center" style="margin: -1px; width: unset;">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #555;">宿舍資訊</span>
+                        </div>
+                        <form id="roomModify<%= DormData.D_ID + "_" + RoomData[0] %>" class="input-group" style="margin: -1px -1px -1px 0; width: unset;" method="post" action="/roomUpdate">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>">
+                          <input type="hidden" name="R_ID" value="<%= RoomData[0] %>">
+                          <select name="new_D_ID" class="form-select fs-2" id="inputGroupSelect01" style="border-radius:0;">
                             <% for ( var k=0 ; k < dormitories.length ; k++){ %>
-                            <option class="fs-2" value="<%= dormitories[k].D_ID %>" <%= dormitories[k].D_ID == dormitories[i].D_ID  ? "selected" : "" %>><%= dormitories[k].Name %></option>
+                            <option class="fs-2" value="<%= dormitories[k].D_ID %>" <%= dormitories[k].D_ID == DormData.D_ID  ? "selected" : "" %>><%= dormitories[k].Name %></option>
                             <% } %>
                           </select>
-
                           <span class="input-group-text fs-2 bg-transparent">房號</span>
-                          <input class="form-control text-center fs-2" value="<%= rooms.get(dormitories[i].D_ID)[o][0] %>" />
+                          <input class="form-control text-center fs-2" name="new_R_ID" value="<%= RoomData[0] %>" />
                           <span class="input-group-text fs-2 bg-transparent" style="border-radius:0;">可容納人數</span>
-                          <input class="form-control text-center fs-2" value="<%= rooms.get(dormitories[i].D_ID)[o][1] %>" />
-                          <span class="input-group-text fs-2 bg-transparent">價格</span>
-                          <input class="form-control text-center fs-2" style="border-radius:0;" value="<%= rooms.get(dormitories[i].D_ID)[o][2] %>" />
+                          <input class="form-control text-center fs-2" name="Peoples" value="<%= RoomData[1] %>" />
+                          <span class="input-group-text fs-2 bg-transparent">入住價格</span>
+                          <input class="form-control text-center fs-2" name="Costs" value="<%= RoomData[2] %>" />
+
+                          <button onclick="$('#roomModify<%= DormData.D_ID + '_' + RoomData[0] %>').submit()" style="border-radius:0;" class="button save">
+                            <i class="material-icons fs-2">save</i>
+                          </button>
+                        </form>
+                        <div class="input-group text-center" style="margin: -1px; width: unset;">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #555;">設備列表</span>
                         </div>
-                        <table class="table">
+                        <table class="table mb-0">
                           <thead>
-                            <th>RC_ID</th>
-                            <th>R_ID</th>
-                            <th>Name</th>
-                            <th>Amount</th>
+                            <th class="fs-2 text-center" style="border-right: 1px white solid;">設備名稱</th>
+                            <th class="fs-2 text-center" style="border-right: 1px white solid;">數量</th>
+                            <th class="fs-2" style="text-align: right">操作</th>
                           </thead>
                           <tbody>
-                            <% for ( var k=0 ; k < room_contents.length ; k++){ %>
-                            <tr>
-                              <td>
-                                <%= room_contents[k].RC_ID %>
+                            <% DormRoomContentData = room_contents.get(DormData.D_ID) %>
+                            <% if (DormRoomContentData != undefined) { %>
+                            <% RoomContentData = DormRoomContentData.get(RoomData[0]) %>
+                            <% if (RoomContentData != undefined) { %>
+                            <% for ( var k=0 ; k < RoomContentData.length ; k++){ %>
+                            <tr id="roomContent<%= RoomContentData[k][0] %>">
+                              <td class="fs-2 text-center" style="border-right: 1px white solid;vertical-align: middle"><%= RoomContentData[k][1] %></td>
+                              <td class="fs-2 text-center" style="vertical-align: middle; border-right: 1px white solid;"><%= RoomContentData[k][2] %></td>
+                              <td class="fs-2" style="text-align: right;">
+                                <button id="editRulesBtn" onclick="editRoomContent('<%= RoomContentData[k][0] %>')" class="button edit" style="margin:0;">
+                                  <i class="material-icons fs-2">edit</i>
+                                </button>
+                                <button class="button logout" onclick="deleteRoomContent('<%= RoomContentData[k][0] %>')" style="margin-left: 10px;">
+                                  <i class="material-icons fs-2">delete</i>
+                                </button>
                               </td>
-                              <td>
-                                <%= room_contents[k].R_ID %>
+                            </tr>
+                            <tr id="editRoomContent<%= RoomContentData[k][0] %>" style="display:none;">
+                              <td class="fs-2 text-center" style="border-right: 1px white solid;vertical-align: middle">
+                                <input name="Name" type="text" maxlength="100" class="form-control fs-2 text-center" value="<%= RoomContentData[k][1] %>" />
                               </td>
-                              <td>
-                                <%= room_contents[k].Name %>
+                              <td class="fs-2 text-center" style="vertical-align: middle; border-right: 1px white solid;">
+                                <input name="Amount" type="number" class="form-control fs-2 text-center" value="<%= RoomContentData[k][2] %>" />
                               </td>
-                              <td>
-                                <%= room_contents[k].Amount %>
+                              <td class="fs-2" style="text-align: right;">
+                                <button id="saveRulesBtn" onclick="saveRoomContent('<%= RoomContentData[k][0] %>')" class="button save">
+                                  <i class="material-icons fs-2">save</i>
+                                </button>
+                                <button class="button logout" onclick="deleteRoomContent('<%= RoomContentData[k][0] %>')">
+                                  <i class="material-icons fs-2">delete</i>
+                                </button>
                               </td>
                             </tr>
                             <% } %>
+                            <% } %>
+                            <% } %>
                           </tbody>
                         </table>
+                        <form method="post" action="/delete" style="display:none;" id="delRoomContent">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" name="RC_ID" value="" />
+                        </form>
+                        <form method="post" action="/updateRoomContent" style="display:none;" id="updateRoomContent">
+                          <input type="hidden" name="Name" value="" />
+                          <input type="hidden" name="Amount" value="" />
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" name="RC_ID" value="" />
+                        </form>
+                        <form class="input-group" style="margin: -1px -1px -1px 0; width:unset;" action="/addRoomContent" method="post" id="RoomContent<%= RoomData[0] %>">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>">
+                          <input type="hidden" name="R_ID" value="<%= RoomData[0] %>">
+                          <input name="Name" maxlength="100" style="border-bottom-left-radius: 5px" type="text" class="form-control fs-2" placeholder="設備名稱" required />
+                          <input name="Amount" type="number" class="form-control fs-2" placeholder="數量" required />
+                          <button id="saveRulesBtn" onclick="$('#RoomContent<%= RoomData[0] %>').submit();" class="button save" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">
+                            <i class="material-icons fs-2">add</i>
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>
                   <% } %>
+                  <% } %>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button id="DormManage<%= DormData.D_ID %>" class="accordion-button collapsed text-center fs-2" data-bs-parent="#DormManage<%= DormData.D_ID %>" style="display:block;" type="button" data-bs-toggle="collapse" data-bs-target="#DormSetting<%= DormData.D_ID %>">宿舍設定</button>
+                    </h2>
+                    <div id="DormSetting<%= DormData.D_ID %>" class='accordion-collapse collapse' aria-labelledby="#DormManage<%= DormData.D_ID %>" data-bs-parent="#dormAccrodion<%= DormData.D_ID %>">
+                      <div class="accordion-body p-0">
+                        <div class="input-group text-center" style="margin: -1px; width: unset; ">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #666;">WIP 這裡預計可設定此宿舍，如刪除與改名</span>
+                        </div>
+
+                        <div class="input-group text-center" style="margin: -1px; width: unset; ">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #444;">權限管理</span>
+                        </div>
+
+                        <div class="input-group text-center" style="margin: -1px; width: unset; ">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #666;">WIP 這裡預計可管理舍監對此宿舍的權限</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
               <% } %>
@@ -157,7 +242,7 @@
             </table>
             <form class="input-group" onsubmit="addManagerValidate()" style="margin: -1px -1px -1px 0; width:unset;" action="/manage" method="post" id="addManager">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <input name="M_ID" maxlength="10" type="text" class="form-control fs-2" placeholder="舍監編號" style="border-top-left-radius: 0" required />
+              <input name="M_ID" maxlength="10" type="text" class="form-control fs-2" placeholder="舍監編號" style="border-top-left-radius: 0;border-bottom-left-radius: 5px" required />
               <input name="Name" maxlength="10" type="text" class="form-control fs-2" placeholder="舍監名稱" required />
               <input name="Email" maxlength="100" type="text" class="form-control fs-2" placeholder="信箱" required />
               <input name="Phone" maxlength="20" type="text" class="form-control fs-2" placeholder="手機號碼" required />
@@ -301,5 +386,43 @@
       }
     }
     return true;
+  }
+
+  function deleteRoomContent(RC_ID) {
+    $("#delRoomContent input")[1].value = RC_ID
+    $("#delRoomContent").submit();
+  }
+
+  function editRoomContent(RC_ID) {
+    $("#editRoomContent" + RC_ID).show();
+    $("#roomContent" + RC_ID).hide();
+  }
+
+  function vaildateRoomContentEdit(RC_ID) {
+    checker = true;
+    for (i = 0; i < 2; i++) {
+      tmp = $("#editRoomContent" + RC_ID + " input")[i].value.trim();
+      if (tmp == "") return true;
+      if (tmp != $("#roomContent" + RC_ID + " td")[i].innerText.trim()) {
+        checker = false;
+      }
+    }
+    return checker;
+  }
+
+  function saveRoomContent(RC_ID) {
+    if (vaildateRoomContentEdit(RC_ID)) {
+      $("#editRoomContent" + RC_ID).hide();
+      $("#roomContent" + RC_ID).show();
+      for (i = 0; i < 2; i++) {
+        $("#editRoomContent" + RC_ID + " input")[i].value = $("#roomContent" + RC_ID + " td")[i].innerText.trim();
+      }
+    } else {
+      for (i = 0; i < 2; i++) {
+        $("#updateRoomContent input")[i].value = $("#editRoomContent" + RC_ID + " input")[i].value;
+      }
+      $("#updateRoomContent input")[3].value = RC_ID;
+      $("#updateRoomContent").submit();
+    }
   }
 </script>
