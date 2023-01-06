@@ -214,12 +214,14 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     let cookie = req.cookies["msg"];
     res.clearCookie("msg", { httpOnly: true });
 
-    managers = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.managers', function (err, rows) {
-            if (err) reject(err);
-            resolve(rows);
-        });
-    }).catch(() => { });
+    if (req.session.level == 0) {
+        managers = await new Promise((resolve, reject) => {
+            DB.query('select * from dormitories_system.managers', function (err, rows) {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        }).catch(() => { });
+    } else managers = undefined
 
     students = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.students', function (err, rows) {
@@ -242,6 +244,18 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             for (i = 0; i < rows.length; i++) {
                 if (datas.has(rows[i].D_ID)) datas.get(rows[i].D_ID).push([rows[i].R_ID, rows[i].Peoples, rows[i].Costs]);
                 else datas.set(rows[i].D_ID, [[rows[i].R_ID, rows[i].Peoples, rows[i].Costs]]);
+            }
+            resolve(datas);
+        });
+    }).catch(() => { });
+
+    permissions = await new Promise((resolve, reject) => {
+        DB.query('SELECT * FROM dormitories_system.permissions;', function (err, rows) {
+            if (err) reject(err);
+            datas = new Map();
+            for (i = 0; i < rows.length; i++) {
+                if (datas.has(rows[i].D_ID)) datas.get(rows[i].D_ID).push(rows[i].M_ID);
+                else datas.set(rows[i].D_ID, [rows[i].M_ID]);
             }
             resolve(datas);
         });
@@ -286,13 +300,15 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
         username: req.session.username, name: req.session.name,
         level: level_names[req.session.level], managers: managers,
-        students: students, Announcement: Announcement[0].Value,
+        students: students, Announcement: Announcement[0].Value, permissions: permissions,
         dormitories: dormitories, rooms: rooms, room_contents: room_contents, registers: registers,
         csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
     });
     else res.redirect("/");
 });
 
+
+// -- Authed Posts --
 app.post("/manage", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.loc == undefined) req.session.loc = "/manage"
     var M_ID = req.body.M_ID;
@@ -419,9 +435,17 @@ app.post("/delete", express.urlencoded({ extended: false }), csurf({ cookie: tru
     } else if (req.body.M_ID) {
         var sql = "DELETE FROM `dormitories_system`.`managers` WHERE (`M_ID` = ?);";
         inputs = [req.body.M_ID]
-    } else if (req.body.RC_ID){
+    } else if (req.body.RC_ID) {
         var sql = "DELETE FROM `dormitories_system`.`room_contents` WHERE (`RC_ID` = ?);";
         inputs = [req.body.RC_ID]
+    } else if (req.body.D_ID) {
+        if (req.body.R_ID) {
+            var sql = "DELETE FROM `dormitories_system`.`rooms` WHERE (`D_ID` = ?) and (`R_ID` = ?);";
+            inputs = [req.body.D_ID, req.body.R_ID]
+        } else {
+            var sql = "DELETE FROM `dormitories_system`.`dormitories` WHERE (`D_ID` = ?);";
+            inputs = [req.body.D_ID]
+        }
     }
     await new Promise((resolve, reject) => {
         DB.query(sql, inputs, function (err) {
@@ -499,6 +523,65 @@ app.post("/newDorm", express.urlencoded({ extended: false }), csurf({ cookie: tr
         console.log(err);
         res.cookie("msg", "設備新增失敗，請重試", { httpOnly: true });
     });
+    res.redirect(req.session.loc);
+});
+
+app.post("/renameDorm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'UPDATE `dormitories_system`.`dormitories` SET `Name` = ? WHERE (`D_ID` = ?)';
+    res.cookie("msg", "宿舍改名成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.Name, req.body.D_ID], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "宿舍改名失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/addRoom", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'INSERT INTO dormitories_system.rooms (`D_ID`, `R_ID`,`Peoples`, `Costs`) VALUES (?, ?, ?, ?)';
+    res.cookie("msg", "房間新增成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.D_ID, req.body.R_ID, req.body.Peoples, req.body.Costs], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "房間新增失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/updatePerm", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    sql = 'DELETE FROM `dormitories_system`.`permissions` WHERE (`D_ID` = ?);';
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.D_ID], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+    });
+    if (!Array.isArray(req.body.M_ID)) req.body.M_ID = [req.body.M_ID];
+    sql = 'INSERT INTO `dormitories_system`.`permissions` (`D_ID`, `M_ID`) VALUES (?, ?)';
+    for (i = 0; i < req.body.M_ID.length; i++) {
+        await new Promise((resolve, reject) => {
+            DB.query(sql, [req.body.D_ID, req.body.M_ID[i]], function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+    res.cookie("msg", "權限更新成功！", { httpOnly: true });
     res.redirect(req.session.loc);
 });
 

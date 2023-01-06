@@ -26,7 +26,7 @@
           <div class="tab-pane fade show active" id="dormitories">
             <form class="input-group" method="post" action="/newDorm" id="newDorm">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <input name="Name" value="" class="form-control fs-2" style="margin-top:-1px;" placeholder="宿舍名稱"/>
+              <input name="Name" value="" class="form-control fs-2" style="margin-top:-1px;" placeholder="宿舍名稱" />
               <button onclick="$('#newDorm').submit();" class="button lodge fs-2" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">新增宿舍</button>
             </form>
 
@@ -55,13 +55,19 @@
                     <div id="room<%= DormData.D_ID + "_" + RoomData[0] %>" class='accordion-collapse collapse' aria-labelledby="#roomAccrodionBtn<%= DormData.D_ID + "_" + RoomData[0] %>" data-bs-parent="#dormAccrodion<%= DormData.D_ID %>">
                       <div class="accordion-body p-0">
                         <div class="input-group text-center" style="margin: -1px; width: unset;">
-                          <span class="form-control fs-2" style="border-radius:0; background-color: #555;">宿舍資訊</span>
+                          <span class="form-control fs-2" style="border-radius:0; border-bottom:0; background-color: #555;">房間資訊</span>
+                          <form method="post" id="deleteRoom<%= DormData.D_ID %>_<%= RoomData[0] %>" method="post" action="/delete">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>">
+                            <input type="hidden" name="R_ID" value="<%= RoomData[0] %>">
+                            <button class="button logout fs-2" onclick="$('#deleteRoom<%= DormData.D_ID %>_<%= RoomData[0] %>').submit()" style="border-radius: 0;">刪除房間</button>
+                          </form>
                         </div>
                         <form id="roomModify<%= DormData.D_ID + "_" + RoomData[0] %>" class="input-group" style="margin: -1px -1px -1px 0; width: unset;" method="post" action="/roomUpdate">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                           <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>">
                           <input type="hidden" name="R_ID" value="<%= RoomData[0] %>">
-                          <select name="new_D_ID" class="form-select fs-2" id="inputGroupSelect01" style="border-radius:0;">
+                          <select name="new_D_ID" class="form-select fs-2" style="border-radius:0;">
                             <% for ( var k=0 ; k < dormitories.length ; k++){ %>
                             <option class="fs-2" value="<%= dormitories[k].D_ID %>" <%= dormitories[k].D_ID == DormData.D_ID  ? "selected" : "" %>><%= dormitories[k].Name %></option>
                             <% } %>
@@ -156,17 +162,47 @@
                     </h2>
                     <div id="DormSetting<%= DormData.D_ID %>" class='accordion-collapse collapse' aria-labelledby="#DormManage<%= DormData.D_ID %>" data-bs-parent="#dormAccrodion<%= DormData.D_ID %>">
                       <div class="accordion-body p-0">
-                        <div class="input-group text-center" style="margin: -1px; width: unset; ">
-                          <span class="form-control fs-2" style="border-radius:0; background-color: #666;">WIP 這裡預計可設定此宿舍，如刪除與改名</span>
+                        <div class="row mt-2 mb-2">
+                          <form id="renameDorm<%= DormData.D_ID %>" method="post" class="text-center col" style="margin: -1px;" action="/renameDorm">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                            <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required />
+                            <div class="input-group" style="max-width:300px; margin:auto;">
+                              <input type="text" class="fs-2 form-control" name="Name" value="<%= DormData.Name %>" required>
+                              <button class="button lodge fs-2 form-control" style="max-width:100px;" onclick="$('#renameDorm<%= DormData.D_ID %>').submit()">修改名稱</button>
+                            </div>
+                          </form>
+                          <form id="addRoom<%= DormData.D_ID %>" method="post" class="text-center col" style="margin: -1px;" action="/addRoom">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                            <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required />
+                            <div class="input-group" style="max-width:600px; margin:auto;">
+                              <input type="text" class="fs-2 form-control" name="R_ID" value="" placeholder="房號" required>
+                              <input type="number" class="fs-2 form-control" min="0" name="Peoples" value="" placeholder="人數" required>
+                              <input type="number" class="fs-2 form-control" min="0" name="Costs" value="" placeholder="價格" required>
+                              <button class="button lodge fs-2 form-control" style="max-width:100px;" onclick="$('#addRoom<%= DormData.D_ID %>').submit()">新增房間</button>
+                            </div>
+                          </form>
+                          <form id="deleteDorm<%= DormData.D_ID %>" method="post" class="text-center col" style="margin: -1px; width: unset; " action="/delete">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                            <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required />
+                            <button class="button logout fs-2" onclick="$('#deleteDorm<%= DormData.D_ID %>').submit()">刪除宿舍</button>
+                          </form>
                         </div>
 
                         <div class="input-group text-center" style="margin: -1px; width: unset; ">
                           <span class="form-control fs-2" style="border-radius:0; background-color: #444;">權限管理</span>
                         </div>
 
-                        <div class="input-group text-center" style="margin: -1px; width: unset; ">
-                          <span class="form-control fs-2" style="border-radius:0; background-color: #666;">WIP 這裡預計可管理舍監對此宿舍的權限</span>
-                        </div>
+                        <form class="col d-flex mb-2 mt-2" style="margin: -1px; width: unset; justify-content: center;" action="/updatePerm" method="post" id="permissionlist<%= DormData.D_ID %>">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
+                          <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required>
+                          <% for ( var o=0 ; o < managers.length ; o++){ %>
+                          <div class="form-check form-switch" style="margin-right:40px;">
+                            <input class="form-check-input fs-2 mt-2 mb-2" name="M_ID" value="<%= managers[o].M_ID %>" type="checkbox" role="switch" id="managerPerm<%= managers[o].M_ID %>" <%= permissions.get(DormData.D_ID) != undefined && permissions.get(DormData.D_ID).includes(managers[o].M_ID) ? "checked" : "" %>>
+                            <label class="form-check-label fs-2 pt-2 pb-2" for="managerPerm<%= managers[o].M_ID %>"><%= managers[o].Name %></label>
+                          </div>
+                          <% } %>
+                          <button onclick="$('permissionlist<%= DormData.D_ID %>').submit();" class="button lodge">保存更新</button>
+                        </form>
                       </div>
                     </div>
                   </div>
