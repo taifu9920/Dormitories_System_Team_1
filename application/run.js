@@ -224,7 +224,7 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     } else managers = undefined
 
     students = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.students', function (err, rows) {
+        DB.query('select * from dormitories_system.students;', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
@@ -242,12 +242,28 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
             if (err) reject(err);
             datas = new Map();
             for (i = 0; i < rows.length; i++) {
-                if (datas.has(rows[i].D_ID)) datas.get(rows[i].D_ID).push([rows[i].R_ID, rows[i].Peoples, rows[i].Costs]);
-                else datas.set(rows[i].D_ID, [[rows[i].R_ID, rows[i].Peoples, rows[i].Costs]]);
+                if (datas.has(rows[i].D_ID)) datas.get(rows[i].D_ID).push([rows[i].R_ID, rows[i].Peoples, rows[i].Costs, []]);
+                else datas.set(rows[i].D_ID, [[rows[i].R_ID, rows[i].Peoples, rows[i].Costs, []]]);
             }
             resolve(datas);
         });
     }).catch(() => { });
+
+    tmp = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.rooms natural join dormitories_system.students', function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(() => { });
+    for (i = 0; i < tmp.length; i++) {
+        room = rooms.get(tmp[i].D_ID)
+        for (o = 0; o < room.length; o++){
+            if (room[o][0] == tmp[i].R_ID){
+                room[o][3].push(tmp[i])
+                break;
+            }
+        }
+    }
 
     permissions = await new Promise((resolve, reject) => {
         DB.query('SELECT * FROM dormitories_system.permissions;', function (err, rows) {
@@ -582,6 +598,38 @@ app.post("/updatePerm", express.urlencoded({ extended: false }), csurf({ cookie:
         });
     }
     res.cookie("msg", "權限更新成功！", { httpOnly: true });
+    res.redirect(req.session.loc);
+});
+
+app.post("/StudentUpdate", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'UPDATE `dormitories_system`.`students` SET `S_ID` = ?, `Name` = ?, `Year` = ?, `Dept_Name` = ?, `Email` = ?, `Phone` = ?, `Sex` = ?, `D_ID` = ?, `R_ID` = ?, `Password` = ? WHERE (`S_ID` = ?)';
+    res.cookie("msg", "學生資訊更新成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.S_ID, req.body.Name, req.body.Year, req.body.Dept_Name, req.body.Email, req.body.Phone, req.body.Sex, req.body.D_ID, req.body.R_ID, req.body.Password, req.body.OriginalS_ID], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "學生資訊更新失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/addStudent", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'INSERT INTO dormitories_system.students (`S_ID`, `Name`, `Year`, `Dept_Name`, `Email`, `Phone`, `Sex`, `D_ID`, `R_ID`, `Password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    res.cookie("msg", "學生新增成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.S_ID, req.body.Name, req.body.Year, req.body.Dept_Name, req.body.Email, req.body.Phone, req.body.Sex, req.body.D_ID, req.body.R_ID, req.body.Password], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "學生新增失敗，請重試", { httpOnly: true });
+    });
     res.redirect(req.session.loc);
 });
 

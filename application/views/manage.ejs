@@ -24,11 +24,13 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade show active" id="dormitories">
+            <% if (level=="管理員") { %>
             <form class="input-group" method="post" action="/newDorm" id="newDorm">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input name="Name" value="" class="form-control fs-2" style="margin-top:-1px;" placeholder="宿舍名稱" />
               <button onclick="$('#newDorm').submit();" class="button lodge fs-2" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">新增宿舍</button>
             </form>
+            <% } %>
 
             <div class="input-group text-center" style="margin: -1px; width: unset; ">
               <span class="form-control fs-2" style="border-radius:0; background-color: #555;">宿舍列表</span>
@@ -36,13 +38,16 @@
             <nav style="border-bottom: 1px solid white;">
               <div class="nav nav-pills flex-column flex-sm-row">
                 <% for ( var i=0 ; i < dormitories.length ; i++){ %>
+                <% if((permissions.get(dormitories[i].D_ID) != undefined && permissions.get(dormitories[i].D_ID).includes(username)) || level=="管理員") { %>
                 <button class='flex-sm-fill text-sm-center nav-link fs-2 <%= i == 0 ? "active" : "" %>' id="dorm<%= dormitories[i].D_ID %>" type="button" data-bs-toggle="tab" data-bs-target="#dormList<%= dormitories[i].D_ID %>"><%= dormitories[i].Name %></button>
+                <% } %>
                 <% } %>
               </div>
             </nav>
             <div class="tab-content">
               <% for ( var i=0 ; i < dormitories.length ; i++){ %>
               <% DormData = dormitories[i] %>
+              <% if((permissions.get(DormData.D_ID) != undefined && permissions.get(DormData.D_ID).includes(username)) || level=="管理員") { %>
               <div class='tab-pane fade <%= i == 0 ? "show active" : "" %>' id="dormList<%= DormData.D_ID %>" tabindex="<%= DormData[0] %>">
                 <div class="accordion accordion-flush" id="dormAccrodion<%= DormData.D_ID %>">
                   <% if (rooms.get(DormData.D_ID) != undefined) { %>
@@ -56,12 +61,14 @@
                       <div class="accordion-body p-0">
                         <div class="input-group text-center" style="margin: -1px; width: unset;">
                           <span class="form-control fs-2" style="border-radius:0; border-bottom:0; background-color: #555;">房間資訊</span>
+                          <% if (level=="管理員") { %>
                           <form method="post" id="deleteRoom<%= DormData.D_ID %>_<%= RoomData[0] %>" method="post" action="/delete">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                             <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>">
                             <input type="hidden" name="R_ID" value="<%= RoomData[0] %>">
                             <button class="button logout fs-2" onclick="$('#deleteRoom<%= DormData.D_ID %>_<%= RoomData[0] %>').submit()" style="border-radius: 0;">刪除房間</button>
                           </form>
+                          <% } %>
                         </div>
                         <form id="roomModify<%= DormData.D_ID + "_" + RoomData[0] %>" class="input-group" style="margin: -1px -1px -1px 0; width: unset;" method="post" action="/roomUpdate">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -83,6 +90,35 @@
                             <i class="material-icons fs-2">save</i>
                           </button>
                         </form>
+
+                        <div class="input-group text-center" style="margin: -1px; width: unset;">
+                          <span class="form-control fs-2" style="border-radius:0; background-color: #555;">住宿生列表</span>
+                        </div>
+                        <table class="table mb-0">
+                          <thead class="fs-2 text-center">
+                            <th style="border-right: 1px white solid;">學號</th>
+                            <th style="border-right: 1px white solid;">姓名</th>
+                            <th style="border-right: 1px white solid;">入學年</th>
+                            <th style="border-right: 1px white solid;">科系</th>
+                            <th style="border-right: 1px white solid;">信箱</th>
+                            <th style="border-right: 1px white solid;">手機號碼</th>
+                            <th>性別</th>
+                          </thead>
+                          <tbody>
+                            <% for (j = 0; j < RoomData[3].length; j++) { %>
+                              <% data = RoomData[3][j] %>
+                            <tr class="fs-2">
+                              <td style="border-right: 1px white solid;"><%= data.S_ID %></td>
+                              <td style="border-right: 1px white solid;"><%= data.Name %></td>
+                              <td style="border-right: 1px white solid;"><%= data.Year %></td>
+                              <td style="border-right: 1px white solid;"><%= data.Dept_Name %></td>
+                              <td style="border-right: 1px white solid;"><%= data.Email %></td>
+                              <td style="border-right: 1px white solid;"><%= data.Phone %></td>
+                              <td><%= students[i].Sex == 0 ? "男" : "女" %></td>
+                            </tr>
+                            <% } %>
+                          </tbody>
+                        </table>
                         <div class="input-group text-center" style="margin: -1px; width: unset;">
                           <span class="form-control fs-2" style="border-radius:0; background-color: #555;">設備列表</span>
                         </div>
@@ -102,7 +138,7 @@
                               <td class="fs-2 text-center" style="border-right: 1px white solid;vertical-align: middle"><%= RoomContentData[k][1] %></td>
                               <td class="fs-2 text-center" style="vertical-align: middle; border-right: 1px white solid;"><%= RoomContentData[k][2] %></td>
                               <td class="fs-2" style="text-align: right;">
-                                <button id="editRulesBtn" onclick="editRoomContent('<%= RoomContentData[k][0] %>')" class="button edit" style="margin:0;">
+                                <button onclick="editRoomContent('<%= RoomContentData[k][0] %>')" class="button edit" style="margin:0;">
                                   <i class="material-icons fs-2">edit</i>
                                 </button>
                                 <button class="button logout" onclick="deleteRoomContent('<%= RoomContentData[k][0] %>')" style="margin-left: 10px;">
@@ -156,6 +192,7 @@
                   </div>
                   <% } %>
                   <% } %>
+                  <% if (level=="管理員") { %>
                   <div class="accordion-item">
                     <h2 class="accordion-header">
                       <button id="DormManage<%= DormData.D_ID %>" class="accordion-button collapsed text-center fs-2" data-bs-parent="#DormManage<%= DormData.D_ID %>" style="display:block;" type="button" data-bs-toggle="collapse" data-bs-target="#DormSetting<%= DormData.D_ID %>">宿舍設定</button>
@@ -174,7 +211,7 @@
                           <form id="addRoom<%= DormData.D_ID %>" method="post" class="text-center col" style="margin: -1px;" action="/addRoom">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>" required>
                             <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required />
-                            <div class="input-group" style="max-width:600px; margin:auto;">
+                            <div class="input-group" style="max-width:500px; margin:auto;">
                               <input type="text" class="fs-2 form-control" name="R_ID" value="" placeholder="房號" required>
                               <input type="number" class="fs-2 form-control" min="0" name="Peoples" value="" placeholder="人數" required>
                               <input type="number" class="fs-2 form-control" min="0" name="Costs" value="" placeholder="價格" required>
@@ -188,6 +225,7 @@
                           </form>
                         </div>
 
+                        <% if (level=="管理員") { %>
                         <div class="input-group text-center" style="margin: -1px; width: unset; ">
                           <span class="form-control fs-2" style="border-radius:0; background-color: #444;">權限管理</span>
                         </div>
@@ -197,24 +235,25 @@
                           <input type="hidden" name="D_ID" value="<%= DormData.D_ID %>" required>
                           <% for ( var o=0 ; o < managers.length ; o++){ %>
                           <div class="form-check form-switch" style="margin-right:40px;">
-                            <input class="form-check-input fs-2 mt-2 mb-2" name="M_ID" value="<%= managers[o].M_ID %>" type="checkbox" role="switch" id="managerPerm<%= managers[o].M_ID %>" <%= permissions.get(DormData.D_ID) != undefined && permissions.get(DormData.D_ID).includes(managers[o].M_ID) ? "checked" : "" %>>
-                            <label class="form-check-label fs-2 pt-2 pb-2" for="managerPerm<%= managers[o].M_ID %>"><%= managers[o].Name %></label>
+                            <input class="form-check-input fs-2 mt-2 mb-2" name="M_ID" value="<%= managers[o].M_ID %>" type="checkbox" role="switch" id="managerPerm<%= DormData.D_ID + "_" + managers[o].M_ID %>" <%= permissions.get(DormData.D_ID) != undefined && permissions.get(DormData.D_ID).includes(managers[o].M_ID) ? "checked" : "" %>>
+                            <label class="form-check-label fs-2 pt-2 pb-2" for="managerPerm<%= DormData.D_ID + "_" + managers[o].M_ID %>"><%= managers[o].Name %></label>
                           </div>
                           <% } %>
                           <button onclick="$('permissionlist<%= DormData.D_ID %>').submit();" class="button lodge">保存更新</button>
                         </form>
+                        <% } %>
                       </div>
                     </div>
                   </div>
-
+                  <% } %>
                 </div>
               </div>
+              <% } %>
               <% } %>
             </div>
           </div>
           <% if (level=="管理員") { %>
           <div class="tab-pane fade" id="managers">
-
             <form method="post" id="updateManager" action="/ManagerUpdate" style="display:none" class="input-group">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input name="M_ID" type="hidden" class="form-control fs-2" value="" style="border-top-left-radius: 0" />
@@ -265,7 +304,7 @@
                   <td><%= managers[i].Phone %></td>
                   <td><%= managers[i].Password %></td>
                   <td style="text-align: right">
-                    <button id="editRulesBtn" onclick="editManager('<%= managers[i].M_ID %>')" class="button edit" style="margin:0;">
+                    <button onclick="editManager('<%= managers[i].M_ID %>')" class="button edit" style="margin:0;">
                       <i class="material-icons fs-2">edit</i>
                     </button>
                     <button class="button logout" onclick="$('#delManager<%= managers[i].M_ID %>').submit()" style="margin-left: 10px;">
@@ -290,50 +329,134 @@
           </div>
           <% } %>
           <div class="tab-pane fade" id="students">
-            <table>
-              <tr>
-                <th>S_ID</th>
-                <th>Name</th>
-                <th>Year</th>
-                <th>Dept_Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Sex</th>
-                <th>R_ID</th>
-                <th>Password</th>
-              </tr>
-              <% for ( var i=0 ; i < students.length ; i++){ %>
-              <tr>
-                <td>
-                  <%= students[i].S_ID %>
-                </td>
-                <td>
-                  <%= students[i].Name %>
-                </td>
-                <td>
-                  <%= students[i].Year %>
-                </td>
-                <td>
-                  <%= students[i].Dept_Name %>
-                </td>
-                <td>
-                  <%= students[i].Email %>
-                </td>
-                <td>
-                  <%= students[i].Phone %>
-                </td>
-                <td>
-                  <%= students[i].Sex %>
-                </td>
-                <td>
-                  <%= students[i].R_ID %>
-                </td>
-                <td>
-                  <%= students[i].Password %>
-                </td>
-              </tr>
-              <% } %>
+            <form method="post" id="updateStudent" action="/StudentUpdate" style="display:none" class="input-group">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input name="S_ID" type="hidden" class="form-control fs-2" value="" style="border-top-left-radius: 0" />
+              <input name="Name" type="hidden" class="form-control fs-2" value="" />
+              <input name="Year" type="hidden" class="form-control fs-2" value="" />
+              <input name="Dept_Name" type="hidden" class="form-control fs-2" value="" />
+              <input name="Email" type="hidden" class="form-control fs-2" value="" />
+              <input name="Phone" type="hidden" class="form-control fs-2" value="" />
+              <input name="Password" type="hidden" class="form-control fs-2" value="" />
+              <input name="Sex" type="hidden" class="form-control fs-2" value="" />
+              <input name="D_ID" type="hidden" class="form-control fs-2" value="" />
+              <input name="R_ID" type="hidden" class="form-control fs-2" value="" />
+              <input name="OriginalS_ID" type="hidden" class="form-control fs-2" value="" />
+            </form>
+
+            <% for ( var i=0 ; i < students.length ; i++){ %>
+            <form method="post" id="delStudent<%= students[i].S_ID %>" action="/delete" style="display:none">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="S_ID" value="<%= students[i].S_ID %>">
+            </form>
+            <% } %>
+            <table class="table mb-0">
+              <thead class="fs-2">
+                <th>學生編號</th>
+                <th>學生姓名</th>
+                <th>入學年</th>
+                <th>科系</th>
+                <th>信箱</th>
+                <th>手機號碼</th>
+                <th>性別</th>
+                <th>宿舍</th>
+                <th>房間</th>
+                <th>密碼</th>
+                <th style="text-align: right">功能</th>
+              </thead>
+              <tbody class="align-middle">
+                <% for ( var i=0 ; i < students.length ; i++){ %>
+                <tr id="StudentEdit<%= students[i].S_ID %>" style="display:none;">
+                  <td><input name="S_ID" style="max-width:120px;" type="text" class="form-control fs-2" value="<%= students[i].S_ID %>" placeholder="學生編號" style="border-top-left-radius: 0" required /></td>
+                  <td><input name="Name" style="max-width:100px;" type="text" class="form-control fs-2" value="<%= students[i].Name %>" placeholder="學生姓名" required /></td>
+                  <td><input name="Year" style="max-width:75px;" type="text" class="form-control fs-2" value="<%= students[i].Year %>" placeholder="入學年" required /></td>
+                  <td><input name="Dept_Name" style="max-width:130px;" type="text" class="form-control fs-2" value="<%= students[i].Dept_Name %>" placeholder="科系" required /></td>
+                  <td><input name="Email" type="text" class="form-control fs-2" value="<%= students[i].Email %>" placeholder="信箱" required /></td>
+                  <td><input name="Phone" style="max-width:125px;" type="text" class="form-control fs-2" value="<%= students[i].Phone %>" placeholder="手機號碼" required /></td>
+                  <td>
+                    <select name="Sex" class="form-select fs-2" style="border-radius:0;">
+                      <option class="fs-2" value="0" <%= students[i].Sex == 0 ? "selected" : "" %>>男</option>
+                      <option class="fs-2" value="1" <%= students[i].Sex == 1 ? "selected" : "" %>>女</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select id="dormList<%= students[i].S_ID %>" name="D_ID" onchange="roomlist('<%= students[i].S_ID %>')" class="form-select fs-2" style="border-radius:0;">
+                      <option class="fs-2" value="null" <%= students[i].D_ID == null  ? "selected" : "" %>>無宿舍</option>
+                      <% for ( var k=0 ; k < dormitories.length ; k++){ %>
+                      <option class="fs-2" value="<%= dormitories[k].D_ID %>" <%= dormitories[k].D_ID == students[i].D_ID  ? "selected" : "" %>><%= dormitories[k].Name %></option>
+                      <% } %>
+                    </select>
+                  </td>
+                  <td>
+                    <select name="R_ID" class="form-select fs-2" style="border-radius:0;" id="roomlist<%= students[i].S_ID %>" <%= students[i].R_ID == null && students[i].D_ID == null  ? "disabled" : "" %>>
+                      <option class="fs-2" value="null" <%= students[i].R_ID == null && students[i].D_ID == null  ? "selected" : "" %>>無房間</option>
+                      <% roomData = rooms.get(students[i].D_ID) %>
+                      <% if (students[i].D_ID != null) { %> <%- roomData.map(x => {return `<option class="fs-2" value="${x[0]}" ${x[0] == students[i].R_ID ? "selected" : ""}>${x[0]}</option>`}).join("\n") %><% }%>
+                    </select>
+                  </td>
+                  <td><input name="Password" style="max-width:100px;" type="text" class="form-control fs-2" value="<%= students[i].Password %>" placeholder="密碼" required /></td>
+
+                  <td style="text-align: right">
+                    <button onclick="saveStudent('<%= students[i].S_ID %>')" class="button save">
+                      <i class="material-icons fs-2">save</i>
+                    </button>
+                    <button class="button logout" onclick="$('#delStudent<%= students[i].S_ID %>').submit()">
+                      <i class="material-icons fs-2">delete</i>
+                    </button>
+                  </td>
+                </tr>
+                <tr class="fs-2" id="StudentRecord<%= students[i].S_ID %>">
+                  <td><%= students[i].S_ID %></td>
+                  <td><%= students[i].Name %></td>
+                  <td><%= students[i].Year %></td>
+                  <td><%= students[i].Dept_Name %></td>
+                  <td><%= students[i].Email %></td>
+                  <td><%= students[i].Phone %></td>
+                  <td><%= students[i].Sex == 0 ? "男" : "女" %><div style="display:none;"><%= students[i].Sex %></div>
+                  </td>
+                  <td><%= dormitories.map(o=>{return students[i].D_ID == o.D_ID ? o.Name : ""}).join("") %><div style="display:none;"><%= students[i].D_ID %></div>
+                  </td>
+                  <td><%= students[i].R_ID %><div style="display:none;"><%= students[i].R_ID %></div>
+                  </td>
+                  <td><%= students[i].Password %></td>
+                  <td style="text-align: right">
+                    <button onclick="editStudent('<%= students[i].S_ID %>')" class="button edit" style="margin:0;">
+                      <i class="material-icons fs-2">edit</i>
+                    </button>
+                    <button class="button logout" onclick="$('#delStudent<%= students[i].S_ID %>').submit()" style="margin-left: 10px;">
+                      <i class="material-icons fs-2">delete</i>
+                    </button>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
             </table>
+            <form class="input-group" onsubmit="addStudentValidate()" style="margin: -1px -1px -1px 0; width:unset;" action="/addStudent" method="post" id="addStudent">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input name="S_ID" maxlength="10" type="text" class="form-control fs-2" placeholder="學生編號" style="border-top-left-radius: 0;border-bottom-left-radius: 5px" required />
+              <input name="Name" maxlength="24" type="text" class="form-control fs-2" placeholder="學生姓名" required />
+              <input name="Year" type="number" class="form-control fs-2" placeholder="入學年" required />
+              <input name="Dept_Name" maxlength="25" type="text" class="form-control fs-2" placeholder="科系" required />
+              <input name="Email" maxlength="100" type="text" class="form-control fs-2" placeholder="信箱" required />
+              <input name="Phone" maxlength="20" type="text" class="form-control fs-2" placeholder="手機號碼" required />
+              <select name="Sex" class="form-select fs-2" style="border-radius:0;">
+                <option class="fs-2" value="0" selected>男</option>
+                <option class="fs-2" value="1">女</option>
+              </select>
+              <select id="dormListNewNewNewNewNewNewNewNew" name="D_ID" onchange="roomlist('NewNewNewNewNewNewNewNew')" class="form-select fs-2" style="border-radius:0;">
+                <option class="fs-2" value="null">無宿舍</option>
+                <% for ( var k=0 ; k < dormitories.length ; k++){ %>
+                <option class="fs-2" value="<%= dormitories[k].D_ID %>"><%= dormitories[k].Name %></option>
+                <% } %>
+              </select>
+              <select name="R_ID" class="form-select fs-2" style="border-radius:0;" id="roomlistNewNewNewNewNewNewNewNew" disabled>
+                <option class="fs-2" value="null">無房間</option>
+              </select>
+              <input name="Password" maxlength="50" type="text" class="form-control fs-2" placeholder="密碼" required />
+              <button id="saveRulesBtn" onclick="addStudentValidate()" class="button save" style="border-top-right-radius: 0; border-bottom-right-radius: 5px">
+                <i class="material-icons fs-2">add</i>
+              </button>
+            </form>
           </div>
           <div class="tab-pane fade" id="registers">
             <table>
@@ -459,6 +582,60 @@
       }
       $("#updateRoomContent input")[3].value = RC_ID;
       $("#updateRoomContent").submit();
+    }
+  }
+
+  function editStudent(S_ID) {
+    $("#StudentEdit" + S_ID).show();
+    $("#StudentRecord" + S_ID).hide();
+  }
+
+  function saveStudent(S_ID) {
+    if (vaildateStudentEdit(S_ID)) {
+      $("#StudentEdit" + S_ID).hide();
+      $("#StudentRecord" + S_ID).show();
+      for (i = 0; i < 7; i++) {
+        $("#StudentEdit" + S_ID + " td input")[i].value = $("#StudentRecord" + S_ID + " td")[i == 6 ? 9 : i].innerText;
+      }
+    } else {
+      for (i = 0; i < 7; i++) {
+        $("#updateStudent input")[i + 1].value = $("#StudentEdit" + S_ID + " td input")[i].value;
+      }
+      for (i = 7; i < 10; i++) {
+        tmp = $("#StudentEdit" + S_ID + " td select")[i - 7].value
+        if (tmp == 'null') $("#updateStudent input")[i + 1].disabled = true;
+        else $("#updateStudent input")[i + 1].value = tmp;
+      }
+      $("#updateStudent input")[11].value = $("#StudentRecord" + S_ID + " td")[0].innerText;
+      $("#updateStudent").submit();
+    }
+  }
+
+  function vaildateStudentEdit(S_ID) {
+    checker = true;
+    for (i = 0; i < 7; i++) {
+      tmp = $("#StudentEdit" + S_ID + " td input")[i].value.trim();
+      if (i == 6) i = 9;
+      if (tmp == "") return true;
+      if (tmp != $("#StudentRecord" + S_ID + " td")[i].innerText.trim()) checker = false;
+    }
+    if ($("#StudentEdit" + S_ID + " td select")[0].value != $("#StudentRecord" + S_ID + " td div")[0].innerText) checker = false;
+    if ($("#StudentEdit" + S_ID + " td select")[1].value != $("#StudentRecord" + S_ID + " td div")[1].innerText) checker = false;
+    if ($("#StudentEdit" + S_ID + " td select")[2].value != $("#StudentRecord" + S_ID + " td div")[2].innerText) checker = false;
+    return checker;
+  }
+
+  function roomlist(S_ID) {
+    selected = $("#dormList" + S_ID + " :selected").val();
+    $("#roomlist" + S_ID).prop('disabled', true);
+    if (selected != 'null') $("#roomlist" + S_ID).prop('disabled', false);
+    $("#roomlist" + S_ID).empty().append(new Option("無房間", null));
+    switch (selected) {
+      <% for ( i=0 ; i < dormitories.length ; i++){ %>
+      case '<%= dormitories[i].D_ID %>':
+        <% roomData = rooms.get(dormitories[i].D_ID) %><% if (roomData != undefined) { %><%- roomData.map(x => {return `$("#roomlist" + S_ID).append(new Option('${x[0]}', '${x[0]}'));`}).join("\n") %>
+        break;
+        <% } %><% } %>
     }
   }
 </script>
