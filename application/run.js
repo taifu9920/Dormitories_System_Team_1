@@ -208,7 +208,7 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
     }).catch(() => { });
 
     register = await new Promise((resolve, reject) => {
-        DB.query('select b.*,a.D_ID,a.R_ID,d.Name , c.costs from dormitories_system.registers as b join dormitories_system.students as a on a.S_ID = b.S_ID natural left outer join dormitories_system.rooms as c left outer join dormitories_system.dormitories as d on c.D_ID = d.D_ID where a.S_ID = ?', [req.session.username], function (err, rows) {
+        DB.query('select b.*,a.D_ID,a.R_ID,d.Name, e.Name as req_Name , c.costs from dormitories_system.registers as b join dormitories_system.students as a on a.S_ID = b.S_ID natural left outer join dormitories_system.rooms as c left outer join dormitories_system.dormitories as d on c.D_ID = d.D_ID left outer join dormitories_system.dormitories as e on b.req_D_ID = e.D_ID where a.S_ID = ?', [req.session.username], function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });

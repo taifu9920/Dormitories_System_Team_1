@@ -79,34 +79,37 @@ function timestampConvert(date){
         </div>
         <% } else { %>
         <div class="card-footer bg-transparent border-light" style="padding: 0;">
-          <form method="post" action="/pay">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <input type="hidden" name="pay" value="<%= registers[0].costs %>" />
             <div class="input-group flex-nowrap text-center" style="margin: -1px; width:unset;">
               <% if (registers[0].D_ID == null && registers[0].R_ID == null) { %>
               <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：待分配房間</span>
+              <span class="form-control col-auto">偏好房間：<%= registers[0].req_Name %></span>
+              <form method="post" action="/delete" id="undoReg">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="Reg_ID" value="<%= registers[0].Reg_ID %>">
+                <button class="form-control col-auto" style="max-width:100px;" onclick="$('#undoReg').submit()">取消申請</button>
+              </form>
               <% } else if (registers[0].costs - registers[0].Payment != 0) { %>
               <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：待付款</span>
               <span class="form-control col-auto">分配至：<%= registers[0].Name %> <%= registers[0].R_ID %>房</span>
               <span class="form-control col-auto">待付金額：<%= registers[0].costs - registers[0].Payment %>元</span>
+              <form method="post" action="/pay">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="pay" value="<%= registers[0].costs %>" />
               <input type="submit" class="btn btn-outline-light form-control col-auto" style="border-top-right-radius: 0; max-width:100px;" value="線上付款" />
+            </form>
               <% } else { %>
+                <span class="form-control col-auto">分配至：<%= registers[0].Name %> <%= registers[0].R_ID %>房</span>
                 <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：已付款</span>
-
+                <span class="form-control col-auto">已付金額：<%= registers[0].Payment %>元</span>
               <% } %>
             </div>
-          </form>
         </div>
         <% } %>
         <% } else if(level== "學生" && allow_reg == 0) { %>
           <div class="card-footer bg-transparent border-light" style="padding: 0;">
-            <form method="post" action="/pay">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <input type="hidden" name="pay" value="<%= registers[0].costs %>" />
-              <div class="input-group flex-nowrap text-center" style="margin: -1px; width:unset;">
-                <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">尚未開放申請住宿</span>
-              </div>
-            </form>
+            <div class="input-group flex-nowrap text-center" style="margin: -1px; width:unset;">
+              <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">尚未開放申請住宿</span>
+            </div>
           </div>
         <% } %>
       </div>
