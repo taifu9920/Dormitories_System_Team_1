@@ -67,7 +67,7 @@ CREATE TABLE `configs` (
 
 LOCK TABLES `configs` WRITE;
 /*!40000 ALTER TABLE `configs` DISABLE KEYS */;
-INSERT INTO `configs` VALUES ('Announcement','【公告】歡迎使用本系統，本系統仍在建置中！'),('owner_account','admin'),('owner_password','12345'),('Rules','<h2><strong>國立高雄大學住宿生活公約</strong></h2><p>一、本公約依據「國立高雄大學學生宿舍管理辦法」及「國立高雄大學學生宿舍 住宿契約」訂定，本校住宿學生，應遵守本公約。&nbsp;</p><p>二、本公約所稱宿舍區，包含宿舍交誼廳、樓(電)梯、走廊、洗衣間、寢室。</p><p>三、住宿學生違反下列規定，採違規扣點方式處理，並通知家長：</p><ol><li>違反下列情形之一者，一次扣3 點：&nbsp;<ul><li>在宿舍區內製造噪音、大聲喧譁或妨礙他人自修或睡眠者。&nbsp;</li><li>垃圾未清、未分類或妨害宿舍環境 清潔衛生者。&nbsp;</li><li>在宿舍區內飼養寵物或餵食動物者。&nbsp;</li><li>未經同意，擅自加裝寢室門鎖者。&nbsp;</li><li>未辦妥異動手續，私自更換寢室者或未經許可佔用他人床位。&nbsp;</li><li>故意損壞公物者。&nbsp;</li><li>宿舍區內吸菸者。&nbsp;</li></ul></li><li>違反下列情形之一者，一次扣5 點：<ul><li>未經同意使用或放置如電冰箱、電爐、電鍋、電暖氣、電暖氣毯或500W 以上等影響用電安全之電器者。&nbsp;</li><li>以物品阻檔宿舍出入口影響出入管制或安全者。&nbsp;</li><li>未經報備核准從事具有安全顧慮或影響宿舍安寧之活動（例如：施放 煙火炮竹、營火晚會、炊食等）。&nbsp;</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，於異性宿舍走廊、 樓(電)梯間、洗衣間、交誼廳等滯留者。&nbsp;</li><li>攜帶任何危險物品或違禁物進入宿舍者。&nbsp;</li></ul></li><li>違反下列情形之一者，一次扣7 點：<ul><li>在宿舍區賭博、酗酒、鬧事、鬥毆行為者或煽動械鬥行為者。</li><li>未經同意，提供本宿舍以外人士集會或活動，妨害宿舍安寧者。</li><li>在宿舍區飼養寵物或餵食動物，三次屢犯經查證屬實者。</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，留置非住宿生或 異性在寢室者情節輕微者。</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，在異性寢室內滯 留者情節輕微者。&nbsp;</li><li>偷竊行為經查證屬實者。</li></ul></li><li>違反下列情形之一者，一次扣10 點，立即退宿、沒收住宿押金並依學 生獎懲辦法議處：<ul><li>私自頂讓床位、佔據他人床位或空床位。</li><li>住宿區械鬥者。</li><li>住宿區吸毒或攜帶毒品者。</li><li>無故未參加住宿生防災逃生演練。</li><li>以物品或滅火器阻擋門禁。</li><li>未經全體室友同意帶異性回寢室。</li><li>進入異性寢室，未經對方全體室友同意。</li><li>異性留宿。</li></ul></li></ol><p>四、扣點、申覆說明：&nbsp;</p><ol><li>一學年內累計扣點達10 點者，必須在兩週內搬離宿舍，取消住宿申請 資格。&nbsp;</li><li>住宿學生違反有關規定之扣點，由學宿會、宿舍輔導員執行，裁決結果 有異議者，得向學務處生輔組申覆。</li><li>第3 點所列違規事項，生輔組得考量發生違規事件之動機、背景等相關 因素，經學務長核定，改以愛校服務等方式實施。</li></ol><p>五、愛校服務內容：</p><ol><li>維護宿舍環境整潔、美化宿舍有具體事實者，服務4 小時抵扣3 點。</li><li>維護宿舍秩序、公共安全有具體貢獻者，抵扣3 點。&nbsp;</li><li>積極辦理學生宿舍活動及參與宿舍公共事務者，抵扣5 點。</li><li>防止違法事件發生有具體事實者，抵扣7 點。</li><li>其他對宿舍有具體事實貢獻者，視情事給予抵扣點數。</li></ol><p>六、寢室會客相關關定：在不違返本公約下，各寢室得經所有成員協議制定寢規， 限制異性於管制時間外出入寢室；因該寢規所生之損害與責任，其責任歸 屬該寢室成員。&nbsp;</p><p>七、本公約經住宿生大會通過，並報學務處核備後實施，修正時亦同。</p><p>&nbsp;學生宿舍生活自治會關心您</p>');
+INSERT INTO `configs` VALUES ('allow_register','1'),('Announcement','【公告】歡迎使用本系統，本系統仍在建置中！'),('owner_account','admin'),('owner_password','12345'),('Rules','<h2><strong>國立高雄大學住宿生活公約</strong></h2><p>一、本公約依據「國立高雄大學學生宿舍管理辦法」及「國立高雄大學學生宿舍 住宿契約」訂定，本校住宿學生，應遵守本公約。&nbsp;</p><p>二、本公約所稱宿舍區，包含宿舍交誼廳、樓(電)梯、走廊、洗衣間、寢室。</p><p>三、住宿學生違反下列規定，採違規扣點方式處理，並通知家長：</p><ol><li>違反下列情形之一者，一次扣3 點：&nbsp;<ul><li>在宿舍區內製造噪音、大聲喧譁或妨礙他人自修或睡眠者。&nbsp;</li><li>垃圾未清、未分類或妨害宿舍環境 清潔衛生者。&nbsp;</li><li>在宿舍區內飼養寵物或餵食動物者。&nbsp;</li><li>未經同意，擅自加裝寢室門鎖者。&nbsp;</li><li>未辦妥異動手續，私自更換寢室者或未經許可佔用他人床位。&nbsp;</li><li>故意損壞公物者。&nbsp;</li><li>宿舍區內吸菸者。&nbsp;</li></ul></li><li>違反下列情形之一者，一次扣5 點：<ul><li>未經同意使用或放置如電冰箱、電爐、電鍋、電暖氣、電暖氣毯或500W 以上等影響用電安全之電器者。&nbsp;</li><li>以物品阻檔宿舍出入口影響出入管制或安全者。&nbsp;</li><li>未經報備核准從事具有安全顧慮或影響宿舍安寧之活動（例如：施放 煙火炮竹、營火晚會、炊食等）。&nbsp;</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，於異性宿舍走廊、 樓(電)梯間、洗衣間、交誼廳等滯留者。&nbsp;</li><li>攜帶任何危險物品或違禁物進入宿舍者。&nbsp;</li></ul></li><li>違反下列情形之一者，一次扣7 點：<ul><li>在宿舍區賭博、酗酒、鬧事、鬥毆行為者或煽動械鬥行為者。</li><li>未經同意，提供本宿舍以外人士集會或活動，妨害宿舍安寧者。</li><li>在宿舍區飼養寵物或餵食動物，三次屢犯經查證屬實者。</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，留置非住宿生或 異性在寢室者情節輕微者。</li><li>非經宿舍輔導員許可，於夜間22 點至隔日早上9 點，在異性寢室內滯 留者情節輕微者。&nbsp;</li><li>偷竊行為經查證屬實者。</li></ul></li><li>違反下列情形之一者，一次扣10 點，立即退宿、沒收住宿押金並依學 生獎懲辦法議處：<ul><li>私自頂讓床位、佔據他人床位或空床位。</li><li>住宿區械鬥者。</li><li>住宿區吸毒或攜帶毒品者。</li><li>無故未參加住宿生防災逃生演練。</li><li>以物品或滅火器阻擋門禁。</li><li>未經全體室友同意帶異性回寢室。</li><li>進入異性寢室，未經對方全體室友同意。</li><li>異性留宿。</li></ul></li></ol><p>四、扣點、申覆說明：&nbsp;</p><ol><li>一學年內累計扣點達10 點者，必須在兩週內搬離宿舍，取消住宿申請 資格。&nbsp;</li><li>住宿學生違反有關規定之扣點，由學宿會、宿舍輔導員執行，裁決結果 有異議者，得向學務處生輔組申覆。</li><li>第3 點所列違規事項，生輔組得考量發生違規事件之動機、背景等相關 因素，經學務長核定，改以愛校服務等方式實施。</li></ol><p>五、愛校服務內容：</p><ol><li>維護宿舍環境整潔、美化宿舍有具體事實者，服務4 小時抵扣3 點。</li><li>維護宿舍秩序、公共安全有具體貢獻者，抵扣3 點。&nbsp;</li><li>積極辦理學生宿舍活動及參與宿舍公共事務者，抵扣5 點。</li><li>防止違法事件發生有具體事實者，抵扣7 點。</li><li>其他對宿舍有具體事實貢獻者，視情事給予抵扣點數。</li></ol><p>六、寢室會客相關關定：在不違返本公約下，各寢室得經所有成員協議制定寢規， 限制異性於管制時間外出入寢室；因該寢規所生之損害與責任，其責任歸 屬該寢室成員。&nbsp;</p><p>七、本公約經住宿生大會通過，並報學務處核備後實施，修正時亦同。</p><p>&nbsp;學生宿舍生活自治會關心您</p>'),('Term','1'),('Year','112');
 /*!40000 ALTER TABLE `configs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,14 +168,13 @@ CREATE TABLE `registers` (
   `Year` int unsigned NOT NULL,
   `Term` int unsigned NOT NULL,
   `When` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Approved` int unsigned NOT NULL,
-  `Payment` int unsigned NOT NULL,
+  `Payment` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`Reg_ID`),
   KEY `S_IDs_idx` (`S_ID`),
   KEY `D_IDs_idx` (`req_D_ID`),
   CONSTRAINT `D_IDs` FOREIGN KEY (`req_D_ID`) REFERENCES `dormitories` (`D_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `S_IDs` FOREIGN KEY (`S_ID`) REFERENCES `students` (`S_ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +183,7 @@ CREATE TABLE `registers` (
 
 LOCK TABLES `registers` WRITE;
 /*!40000 ALTER TABLE `registers` DISABLE KEYS */;
-INSERT INTO `registers` VALUES (17,'A1099999',2,111,1,'2023-01-07 18:45:34',1,0);
+INSERT INTO `registers` VALUES (24,'A1095512',2,112,1,'2023-01-07 22:01:46',354);
 /*!40000 ALTER TABLE `registers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -277,7 +276,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES ('A1095512','林敬寶',109,'資訊工程系','a1095512@mail.nuk.edu.tw','0908850282',0,NULL,NULL,'a1095512'),('A1095548','陳弘恩',109,'資訊工程系','a1095548@mail.nuk.edu.tw','0912345678',0,NULL,NULL,'a1095548'),('A1099999','比爾蓋茲',109,'電腦王','bill@mail.nuk.edu.tw','0999123999',1,2,100,'bill');
+INSERT INTO `students` VALUES ('A1095512','林敬寶',109,'資訊工程系','a1095512@mail.nuk.edu.tw','0908850282',0,2,100,'a1095512'),('A1095548','陳弘恩',109,'資訊工程系','a1095548@mail.nuk.edu.tw','0912345678',0,NULL,NULL,'a1095548'),('A1099999','比爾蓋茲',109,'電腦王','bill@mail.nuk.edu.tw','0999123999',1,NULL,NULL,'bill');
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -319,4 +318,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-07 18:47:21
+-- Dump completed on 2023-01-08  0:00:10
