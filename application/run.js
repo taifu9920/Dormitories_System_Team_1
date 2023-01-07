@@ -193,6 +193,12 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
         });
     }).catch(() => { });
 
+    allow_reg = (await new Promise((resolve, reject) => {
+        DB.query("SELECT Value FROM dormitories_system.configs where SC_Tag = 'allow_register'", function (err, rows) {
+            if (err) reject(err)
+            else resolve(rows)
+        })
+    }).catch(() => { }))[0].Value
 
     dormitories = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.dormitories', function (err, rows) {
@@ -210,7 +216,7 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
 
     res.render("home", {
         username: req.session.username, name: req.session.name,
-        level: level_names[req.session.level],
+        level: level_names[req.session.level], allow_reg: allow_reg,
         comments: comments, Announcement: Announcement[0].Value, Rules: Rules[0].Value, csrfToken: req.csrfToken(),
         registers: register, dormitories: dormitories,
         msg: cookie, route: req.baseUrl + req.path
@@ -229,7 +235,17 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
                 resolve(rows);
             });
         }).catch(() => { });
-    } else managers = undefined
+
+        configs = await new Promise((resolve, reject) => {
+            DB.query('select * from dormitories_system.configs', function (err, rows) {
+                if (err) reject(err);
+                resolve(new Map(rows.map(o => [o.SC_Tag, o.Value])));
+            });
+        }).catch(() => { });
+    } else {
+        managers = undefined;
+        configs = undefined;
+    }
 
     students = await new Promise((resolve, reject) => {
         DB.query('select * from dormitories_system.students;', function (err, rows) {
@@ -330,7 +346,7 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
 
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
         username: req.session.username, name: req.session.name,
-        level: level_names[req.session.level], managers: managers,
+        level: level_names[req.session.level], managers: managers, configs: configs,
         students: students, Announcement: Announcement[0].Value, permissions: permissions, violations: violations,
         dormitories: dormitories, rooms: rooms, room_contents: room_contents, registers: registers,
         csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
@@ -410,17 +426,37 @@ app.post("/rules", express.urlencoded({ extended: false }), csurf({ cookie: true
 
 app.post("/register", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.loc == undefined) req.session.loc = "/"
-    var sql = 'INSERT INTO dormitories_system.registers (`S_ID`, `req_D_ID`, `Year`, `Term`, `Approved`, `Payment`) VALUES (?,?,?,?,?,?)';
-    res.cookie("msg", "住宿申請成功！", { httpOnly: true });
-    await new Promise((resolve, reject) => {
-        DB.query(sql, [req.session.username, req.body.D_ID, 111, 1, 1, 0], function (err) {
-            if (err) reject(err);
-            else { resolve(); }
+    var sql = 'INSERT INTO dormitories_system.registers (`S_ID`, `req_D_ID`, `Year`, `Term`) VALUES (?,?,?,?)';
+
+    if ((await new Promise((resolve, reject) => {
+        DB.query("SELECT Value FROM dormitories_system.configs where SC_Tag = 'allow_register'", function (err, rows) {
+            if (err) reject(err)
+            else resolve(rows)
+        })
+    }).catch(() => { }))[0].Value == 1) {
+        res.cookie("msg", "住宿申請成功！", { httpOnly: true });
+        Year = (await new Promise((resolve, reject) => {
+            DB.query("SELECT Value FROM dormitories_system.configs where SC_Tag = 'Year'", function (err, rows) {
+                if (err) reject(err)
+                else resolve(rows)
+            })
+        }).catch(() => { }))[0].Value;
+        Term = (await new Promise((resolve, reject) => {
+            DB.query("SELECT Value FROM dormitories_system.configs where SC_Tag = 'Term'", function (err, rows) {
+                if (err) reject(err)
+                else resolve(rows)
+            })
+        }).catch(() => { }))[0].Value;
+        await new Promise((resolve, reject) => {
+            DB.query(sql, [req.session.username, req.body.D_ID, Year, Term], function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.cookie("msg", "申請失敗，請重試", { httpOnly: true });
         });
-    }).catch((err) => {
-        console.log(err);
-        res.cookie("msg", "申請失敗，請重試", { httpOnly: true });
-    });
+    } else res.cookie("msg", "尚未開放申請住宿！", { httpOnly: true });
     res.redirect(req.session.loc);
 });
 
@@ -704,6 +740,30 @@ app.post("/updateViolation", express.urlencoded({ extended: false }), csurf({ co
         console.log(err);
         res.cookie("msg", "紀錄更新失敗，請重試", { httpOnly: true });
     });
+    res.redirect(req.session.loc);
+});
+
+app.post("/updateSetting", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    vals = [req.body.Year, req.body.Term, req.body.allowReg, req.body.ownerAcc, req.body.ownerPass]
+    keys = ["Year", "Term", "allow_register", "owner_account", "owner_password"]
+    res.cookie("msg", "更新成功！", { httpOnly: true });
+    sql = "UPDATE `dormitories_system`.`configs` SET `Value` = ? WHERE (`SC_Tag` = ?);"
+    for (i = 0; i < keys.length; i++) {
+        if (vals[i] != undefined) {
+            await new Promise((resolve, reject) => {
+                DB.query(sql, [vals[i], keys[i]], function (err) {
+                    if (err) reject(err);
+                    else { resolve(); }
+                });
+            }).catch((err) => {
+                console.log(err)
+                res.cookie("msg", "更新失敗，請重試", { httpOnly: true });
+            });
+        }
+    }
+    if (req.body.ownerAcc != undefined) req.session.username = req.body.ownerAcc
+    if (req.body.ownerPass != undefined) req.session.password = req.body.ownerPass
     res.redirect(req.session.loc);
 });
 

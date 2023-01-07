@@ -589,7 +589,30 @@ function timestampConvert(date){
             </table>
           </div>
           <div class="tab-pane fade" id="SysSetting">
-            WIP，預計用來設定系統參數
+            <form autocomplete="off" class="input-group" method="post" action="/updateSetting" id="sysSettings">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <span class="input-group-text fs-2 bg-transparent fs-2">學年度修改</span>
+              <input type="number" class="form-control fs-2" name="Year" placeholder="目前學年度" value="<%= configs.get("Year") %>"/>
+              <span class="input-group-text bg-transparent fs-2">學期修改</span>
+              <select class="form-select fs-2" name="Term">
+                <option value="1" <%= configs.get("Term") == 1 ? "selected" : "" %>>第一學期</option>
+                <option value="2" <%= configs.get("Term") == 2 ? "selected" : "" %>>第二學期</option>
+              </select>
+              <span class="input-group-text bg-transparent fs-2">是否開放申請宿舍</span>
+              <select class="form-select fs-2" name="allowReg">
+                <option value="0" <%= configs.get("allow_register") == 0 ? "selected" : "" %>>不開放</option>
+                <option value="1" <%= configs.get("allow_register") == 1 ? "selected" : "" %>>開放</option>
+              </select>
+              <button onclick="$('#sysSettings').submit()" style="border-radius:0;" class="button save fs-2"><i class="material-icons fs-2">save</i></button>
+            </form>
+            <form autocomplete="off" class="input-group" method="post" action="/updateSetting" id="updateAdmin">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>"/>
+              <span class="input-group-text bg-transparent fs-2">修改帳號</span>
+              <input type="text" class="form-control fs-2" maxlength="500" name="ownerAcc" value="<%= configs.get("owner_account") %>"/>
+              <span class="input-group-text bg-transparent fs-2">修改密碼</span>
+              <input type="text" class="form-control fs-2" maxlength="500" name="ownerPass" value="<%= configs.get("owner_password") %>"/>
+              <button onclick="$('#updateAdmin').submit()" style="border-radius:0;" class="button edit fs-2">修改帳號密碼</button>
+            </form>
           </div>
           <% } %>
         </div>

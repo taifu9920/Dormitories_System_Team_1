@@ -58,8 +58,8 @@ function timestampConvert(date){
           </form>
           <% } %>
         </div>
+        <% if (level== "學生" && allow_reg == 1) { %>
         <% if (registers[0] == null) {%>
-        <% if (level== "學生") { %>
         <div class="card-footer bg-transparent border-light" style="padding: 0;">
           <form method="post" action="/register">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -77,7 +77,6 @@ function timestampConvert(date){
             </div>
           </form>
         </div>
-        <% } %>
         <% } else { %>
         <div class="card-footer bg-transparent border-light" style="padding: 0;">
           <form method="post" action="/pay">
@@ -98,6 +97,17 @@ function timestampConvert(date){
             </div>
           </form>
         </div>
+        <% } %>
+        <% } else if(level== "學生" && allow_reg == 0) { %>
+          <div class="card-footer bg-transparent border-light" style="padding: 0;">
+            <form method="post" action="/pay">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="pay" value="<%= registers[0].costs %>" />
+              <div class="input-group flex-nowrap text-center" style="margin: -1px; width:unset;">
+                <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">尚未開放申請住宿</span>
+              </div>
+            </form>
+          </div>
         <% } %>
       </div>
     </div>
