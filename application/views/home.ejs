@@ -64,10 +64,15 @@ function timestampConvert(date){
           <form method="post" action="/register">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="input-group flex-nowrap" style="margin: -1px; width:unset;">
-              <label class="input-group-text bg-transparent col" style="border-top-left-radius: 0;" for="a">
+              <label class="input-group-text bg-transparent col fs-2" style="border-top-left-radius: 0;" for="a">
                 <input class="form-check-input mt-0" type="checkbox" value="" id="a" required>
                 <span style="margin-left: 6px;">我已詳細閱讀住宿申請說明並同意</span>
               </label>
+              <select id="b" name="D_ID" class="form-select fs-2" style="border-radius:0; max-width:200px;" required>
+                <% for ( var k=0 ; k < dormitories.length ; k++){ %>
+                <option class="fs-2" value="<%= dormitories[k].D_ID %>"><%= dormitories[k].Name %></option>
+                <% } %>
+              </select>
               <input type="submit" class="btn btn-outline-light form-control col-auto" style="border-top-right-radius: 0; max-width:60px;" value="申請" />
             </div>
           </form>
@@ -77,13 +82,18 @@ function timestampConvert(date){
         <div class="card-footer bg-transparent border-light" style="padding: 0;">
           <form method="post" action="/pay">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <div class="input-group flex-nowrap" style="margin: -1px; width:unset;">
-              <span class="form-control col-auto" style="border-top-left-radius: 0;max-width:150px;">目前狀態：<%= ["未付款","已付款", "已通過"][registers[0].Approved] %></span>
-              <% if (registers[0].Approved == 0) { %>
-              <span class="form-control col-auto">需付 <%= registers[0].Payment %> 元</span>
+            <input type="hidden" name="pay" value="<%= registers[0].costs %>" />
+            <div class="input-group flex-nowrap text-center" style="margin: -1px; width:unset;">
+              <% if (registers[0].D_ID == null && registers[0].R_ID == null) { %>
+              <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：待分配房間</span>
+              <% } else if (registers[0].costs - registers[0].Payment != 0) { %>
+              <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：待付款</span>
+              <span class="form-control col-auto">分配至：<%= registers[0].Name %> <%= registers[0].R_ID %>房</span>
+              <span class="form-control col-auto">待付金額：<%= registers[0].costs - registers[0].Payment %>元</span>
               <input type="submit" class="btn btn-outline-light form-control col-auto" style="border-top-right-radius: 0; max-width:100px;" value="線上付款" />
-              <% } else if (registers[0].Approved == 1) { %>
-              <span class="form-control col-auto" style="text-align: center;border-top-right-radius: 0;">待審核</span>
+              <% } else { %>
+                <span class="form-control col-auto" style="border-top-left-radius: 0;border-top-right-radius: 0;">目前狀態：已付款</span>
+
               <% } %>
             </div>
           </form>
@@ -133,6 +143,8 @@ function timestampConvert(date){
     </div>
   </div>
 </div>
+
+<div style="height:20px;"></div>
 
 <script>
   function editRules() {

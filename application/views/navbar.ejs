@@ -6,7 +6,7 @@
           <div class="col fs-2" id="Announcement" style="margin: auto; white-space: normal; overflow-wrap: anywhere;"><% if (Announcement != "" ) {%><%= Announcement %><% } else { %>【暫無公告】<% } %></div>
           <% if (level=="舍監" || level=="管理員") { %>
           <div class="col fs-2" id="edit" style="margin: auto; white-space: normal; overflow-wrap: anywhere; display:none;">
-            <form method="post" action="/anno" id="UpdateAnno">
+            <form autocomplete="off" method="post" action="/anno" id="UpdateAnno">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <div class="input-group">
                 <input type="text" id="anno" name="Announcement" class="form-control fs-2" placeholder="公告" value='<% if (Announcement != "" ) {%><%= Announcement %><% } else { %>【暫無公告】<% } %>'>

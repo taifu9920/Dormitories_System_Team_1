@@ -193,8 +193,16 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
         });
     }).catch(() => { });
 
+
+    dormitories = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.dormitories', function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(() => { });
+
     register = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.registers where S_ID = ?;', [req.session.username], function (err, rows) {
+        DB.query('select b.*,a.D_ID,a.R_ID,d.Name , c.costs from dormitories_system.registers as b join dormitories_system.students as a on a.S_ID = b.S_ID natural left outer join dormitories_system.rooms as c left outer join dormitories_system.dormitories as d on c.D_ID = d.D_ID where a.S_ID = ?', [req.session.username], function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
@@ -204,7 +212,7 @@ app.get("/", csurf({ cookie: true }), auth, async function (req, res) {
         username: req.session.username, name: req.session.name,
         level: level_names[req.session.level],
         comments: comments, Announcement: Announcement[0].Value, Rules: Rules[0].Value, csrfToken: req.csrfToken(),
-        registers: register,
+        registers: register, dormitories: dormitories,
         msg: cookie, route: req.baseUrl + req.path
     });
 });
@@ -257,8 +265,8 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     }).catch(() => { });
     for (i = 0; i < tmp.length; i++) {
         room = rooms.get(tmp[i].D_ID)
-        for (o = 0; o < room.length; o++){
-            if (room[o][0] == tmp[i].R_ID){
+        for (o = 0; o < room.length; o++) {
+            if (room[o][0] == tmp[i].R_ID) {
                 room[o][3].push(tmp[i])
                 break;
             }
@@ -300,11 +308,11 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
     }).catch(() => { });
 
     registers = await new Promise((resolve, reject) => {
-        DB.query('select * from dormitories_system.registers', function (err, rows) {
+        DB.query('select b.*,a.D_ID,a.R_ID,d.Name, e.Name as req_Name , c.costs from dormitories_system.registers as b join dormitories_system.students as a on a.S_ID = b.S_ID natural left outer join dormitories_system.rooms as c left outer join dormitories_system.dormitories as d on c.D_ID = d.D_ID left outer join dormitories_system.dormitories as e on b.req_D_ID = e.D_ID ', function (err, rows) {
             if (err) reject(err);
             resolve(rows);
         });
-    }).catch(err => { });
+    }).catch(() => { });
 
     Announcement = await new Promise((resolve, reject) => {
         DB.query('select `Value` from dormitories_system.configs where `SC_Tag` = "Announcement"', function (err, rows) {
@@ -313,10 +321,17 @@ app.get("/manage", csurf({ cookie: true }), auth, async function (req, res) {
         });
     }).catch(() => { });
 
+    violations = await new Promise((resolve, reject) => {
+        DB.query('select * from dormitories_system.violation_records', function (err, rows) {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    }).catch(() => { });
+
     if (req.session.level == 1 || req.session.level == 0) res.render("manage", {
         username: req.session.username, name: req.session.name,
         level: level_names[req.session.level], managers: managers,
-        students: students, Announcement: Announcement[0].Value, permissions: permissions,
+        students: students, Announcement: Announcement[0].Value, permissions: permissions, violations: violations,
         dormitories: dormitories, rooms: rooms, room_contents: room_contents, registers: registers,
         csrfToken: req.csrfToken(), msg: cookie, route: req.baseUrl + req.path
     });
@@ -395,10 +410,10 @@ app.post("/rules", express.urlencoded({ extended: false }), csurf({ cookie: true
 
 app.post("/register", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.loc == undefined) req.session.loc = "/"
-    var sql = 'INSERT INTO dormitories_system.registers (`S_ID`, `Year`, `Term`, `Approved`, `Payment`) VALUES (?,?,?,?,?)';
+    var sql = 'INSERT INTO dormitories_system.registers (`S_ID`, `req_D_ID`, `Year`, `Term`, `Approved`, `Payment`) VALUES (?,?,?,?,?,?)';
     res.cookie("msg", "住宿申請成功！", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [req.session.username, 111, 1, 0, 0], function (err) {
+        DB.query(sql, [req.session.username, req.body.D_ID, 111, 1, 1, 0], function (err) {
             if (err) reject(err);
             else { resolve(); }
         });
@@ -411,10 +426,10 @@ app.post("/register", express.urlencoded({ extended: false }), csurf({ cookie: t
 
 app.post("/pay", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
     if (req.session.loc == undefined) req.session.loc = "/"
-    var sql = 'UPDATE `dormitories_system`.`registers` SET `Approved` = 1 WHERE (`S_ID` = ?)';
+    var sql = 'UPDATE `dormitories_system`.`registers` SET `Payment` = ? WHERE (`S_ID` = ?)';
     res.cookie("msg", "付款成功", { httpOnly: true });
     await new Promise((resolve, reject) => {
-        DB.query(sql, [req.session.username], function (err) {
+        DB.query(sql, [req.body.pay, req.session.username], function (err) {
             if (err) reject(err);
             else { resolve(); }
         });
@@ -445,33 +460,58 @@ app.post("/delete", express.urlencoded({ extended: false }), csurf({ cookie: tru
     if (req.session.loc == undefined) req.session.loc = (req.body.commentID ? "/" : "/manage")
     res.cookie("msg", "刪除成功", { httpOnly: true });
     inputs = []
+    sql = ""
     if (req.body.commentID) {
-        var sql = "DELETE FROM `dormitories_system`.`comments` WHERE (`C_ID` = ?);";
+        sql = "DELETE FROM `dormitories_system`.`comments` WHERE (`C_ID` = ?);";
         inputs = [req.body.commentID]
     } else if (req.body.M_ID) {
-        var sql = "DELETE FROM `dormitories_system`.`managers` WHERE (`M_ID` = ?);";
+        sql = "DELETE FROM `dormitories_system`.`managers` WHERE (`M_ID` = ?);";
         inputs = [req.body.M_ID]
     } else if (req.body.RC_ID) {
-        var sql = "DELETE FROM `dormitories_system`.`room_contents` WHERE (`RC_ID` = ?);";
+        sql = "DELETE FROM `dormitories_system`.`room_contents` WHERE (`RC_ID` = ?);";
         inputs = [req.body.RC_ID]
     } else if (req.body.D_ID) {
         if (req.body.R_ID) {
-            var sql = "DELETE FROM `dormitories_system`.`rooms` WHERE (`D_ID` = ?) and (`R_ID` = ?);";
+            sql = "DELETE FROM `dormitories_system`.`rooms` WHERE (`D_ID` = ?) and (`R_ID` = ?);";
             inputs = [req.body.D_ID, req.body.R_ID]
         } else {
-            var sql = "DELETE FROM `dormitories_system`.`dormitories` WHERE (`D_ID` = ?);";
+            sql = "DELETE FROM `dormitories_system`.`dormitories` WHERE (`D_ID` = ?);";
             inputs = [req.body.D_ID]
         }
-    }
-    await new Promise((resolve, reject) => {
-        DB.query(sql, inputs, function (err) {
-            if (err) reject(err);
-            else { resolve(); }
+    } else if (req.body.Reg_ID) {
+        success = true;
+        await new Promise((resolve, reject) => {
+            DB.query("UPDATE `dormitories_system`.`students` SET `D_ID` = NULL, `R_ID` = NULL WHERE (`S_ID` = ?);", [req.body.S_ID], function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            console.log(err);
+            success = false;
+            res.cookie("msg", "刪除失敗，請重試", { httpOnly: true });
         });
-    }).catch((err) => {
-        console.log(err);
-        res.cookie("msg", "刪除失敗，請重試", { httpOnly: true });
-    });
+        if (success) {
+            sql = "DELETE FROM `dormitories_system`.`registers` WHERE (`Reg_ID` = ?);"
+            inputs = [req.body.Reg_ID]
+        }
+    } else if (req.body.S_ID) {
+        sql = "DELETE FROM `dormitories_system`.`students` WHERE (`S_ID` = ?)";
+        inputs = [req.body.S_ID]
+    } else if (req.body.V_ID) {
+        sql = "DELETE FROM `dormitories_system`.`violation_records` WHERE (`V_ID` = ?)";
+        inputs = [req.body.V_ID]
+    }
+    if (sql != "" || inputs != []) {
+        await new Promise((resolve, reject) => {
+            DB.query(sql, inputs, function (err) {
+                if (err) reject(err);
+                else { resolve(); }
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.cookie("msg", "刪除失敗，請重試", { httpOnly: true });
+        });
+    }
     res.redirect(req.session.loc);
 });
 
@@ -621,6 +661,8 @@ app.post("/addStudent", express.urlencoded({ extended: false }), csurf({ cookie:
     if (req.session.loc == undefined) req.session.loc = "/manage"
     var sql = 'INSERT INTO dormitories_system.students (`S_ID`, `Name`, `Year`, `Dept_Name`, `Email`, `Phone`, `Sex`, `D_ID`, `R_ID`, `Password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     res.cookie("msg", "學生新增成功！", { httpOnly: true });
+    req.body.D_ID = (req.body.D_ID == "null" ? null : req.body.D_ID)
+    req.body.R_ID = (req.body.R_ID == "null" ? null : req.body.R_ID)
     await new Promise((resolve, reject) => {
         DB.query(sql, [req.body.S_ID, req.body.Name, req.body.Year, req.body.Dept_Name, req.body.Email, req.body.Phone, req.body.Sex, req.body.D_ID, req.body.R_ID, req.body.Password], function (err) {
             if (err) reject(err);
@@ -629,6 +671,38 @@ app.post("/addStudent", express.urlencoded({ extended: false }), csurf({ cookie:
     }).catch((err) => {
         console.log(err);
         res.cookie("msg", "學生新增失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/addViolations", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'INSERT INTO `dormitories_system`.`violation_records` (`S_ID`, `Content`) VALUES (?,?)';
+    res.cookie("msg", "違規登記成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.S_ID, req.body.Content], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "違規登記失敗，請重試", { httpOnly: true });
+    });
+    res.redirect(req.session.loc);
+});
+
+app.post("/updateViolation", express.urlencoded({ extended: false }), csurf({ cookie: true }), auth, async function (req, res) {
+    if (req.session.loc == undefined) req.session.loc = "/manage"
+    var sql = 'UPDATE `dormitories_system`.`violation_records` SET `S_ID` = ?, `Content` = ?, `When` = ? WHERE (`V_ID` = ?)';
+    res.cookie("msg", "紀錄更新成功！", { httpOnly: true });
+    await new Promise((resolve, reject) => {
+        DB.query(sql, [req.body.S_ID, req.body.Content, req.body.When, req.body.V_ID], function (err) {
+            if (err) reject(err);
+            else { resolve(); }
+        });
+    }).catch((err) => {
+        console.log(err);
+        res.cookie("msg", "紀錄更新失敗，請重試", { httpOnly: true });
     });
     res.redirect(req.session.loc);
 });
